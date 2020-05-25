@@ -61,7 +61,7 @@ Tratta più economica e tratta più breve richiede all'utente l'inserimento dell
 2- Meta più breve
 0- Indietro               ->[D]
 ```
-Discorso medesimo fatto prima.
+Discorso medesimo fatto prima con unica differenza che viene richiesta solo la città di partenza.
 
 ```
 [F] Menu amministratore
@@ -82,6 +82,7 @@ Cognome
 Nickname
 Email
 ```
+Lo stesso può valere anche per gli amministratori.
 
 ## Tratte e mete
 Ogni arco tra due nodi ha due pesi:\
