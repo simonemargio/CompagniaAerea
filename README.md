@@ -81,6 +81,7 @@ Nome
 Cognome
 Nickname
 Email
+Password
 ```
 Lo stesso può valere anche per gli amministratori.
 
