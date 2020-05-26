@@ -3,4 +3,4 @@ project(CompagniaAerea C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(CompagniaAerea main.c Abr.c Abr.h CompagniaAerea.c CompagniaAerea.h Error.c Error.h)
+add_executable(CompagniaAerea main.c Abr.c Abr.h CompagniaAerea.c CompagniaAerea.h Error.c Error.h Grafo.c Grafo.h)

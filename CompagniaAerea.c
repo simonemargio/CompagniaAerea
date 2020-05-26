@@ -4,6 +4,7 @@
 #include "CompagniaAerea.h"
 #include "Abr.h"
 #include "Error.h"
+#include "Grafo.h"
 
 
 void F_gestione_compagnia_aerea(){
@@ -16,15 +17,48 @@ void F_gestione_compagnia_aerea(){
      * */
     CompagniaAerea C=NULL;
     F_alloca_struttura_compagnia_aerea(&C);
+    F_alloca_struttura_gestione_grafo_citta(&C);
     F_popolamento_amministratori(C);
-
+    F_popoplamento_grafo_mappa_voli(C);
 
 
     /* Funzioni di Test */
+    puts("Amministratori:");
     AlberoAmministratore T=C->strutturaAmministratoriPtr;
     STAMPA_AMMINISTRATORI(T);
+    puts("\nCitta presenti:");
+    Grafo G=C->strutturaGrafoPtr;
+    ListaAdj L=G->StrutturaGrafoPtr;
+    STAMPA_GRAFO_CITTA(&L);
 }
 
+void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
+    Grafo G=C->strutturaGrafoPtr;
+
+    /* Aggiungo nodi e archi */
+    F_aggiungi_nodo_grafo_lista(&G,"Roma");
+    F_aggiungi_nodo_grafo_lista(&G,"Milano");
+    F_aggiungi_nodo_grafo_lista(&G,"Napoli");
+    F_aggiungi_nodo_grafo_lista(&G,"Firenze");
+    F_aggiungi_nodo_grafo_lista(&G,"Cagliari");
+    F_aggiungi_nodo_grafo_lista(&G,"Venezia");
+    F_aggiungi_nodo_grafo_lista(&G,"Palermo");
+    F_aggiungi_nodo_grafo_lista(&G,"Verona");
+    F_aggiungi_nodo_grafo_lista(&G,"Bari");
+    F_aggiungi_nodo_grafo_lista(&G,"Olbia");
+    F_aggiungi_nodo_grafo_lista(&G,"Amsterdam");
+    F_aggiungi_nodo_grafo_lista(&G,"Berlino");
+    F_aggiungi_nodo_grafo_lista(&G,"Ibiza");
+    F_aggiungi_nodo_grafo_lista(&G,"Budapest");
+    F_aggiungi_nodo_grafo_lista(&G,"Lisbona");
+    F_aggiungi_nodo_grafo_lista(&G,"Londra");
+    F_aggiungi_nodo_grafo_lista(&G,"Mosca");
+    F_aggiungi_nodo_grafo_lista(&G,"Tokyo");
+    F_aggiungi_nodo_grafo_lista(&G,"Stoccolma");
+    F_aggiungi_nodo_grafo_lista(&G,"Singapore");
+
+    C->strutturaGrafoPtr=G;
+}
 
 void F_popolamento_amministratori(CompagniaAerea C){
     int numeroAmministratori=3;
@@ -89,6 +123,16 @@ void F_alloca_struttura_compagnia_aerea(CompagniaAerea *C){
     if(F_struttura_vuota(*C)) F_error(1);
     (*C)->strutturaUtentiPtr=NULL;
     (*C)->strutturaAmministratoriPtr=NULL;
+    (*C)->strutturaGrafoPtr=NULL;
+}
+
+
+void F_alloca_struttura_gestione_grafo_citta(CompagniaAerea *C){
+    Grafo G=(struct struttura_gestione_grafi*)malloc(sizeof(struct struttura_gestione_grafi));
+    if(F_struttura_vuota(G)) F_error(3);
+    G->StrutturaGrafoPtr=NULL;
+    G->numeroNodi=0;
+    (*C)->strutturaGrafoPtr=G;
 }
 
 int F_struttura_vuota(void *S){
