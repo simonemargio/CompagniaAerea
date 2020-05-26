@@ -35,7 +35,6 @@ void F_gestione_compagnia_aerea(){
 void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr;
 
-    /* Aggiungo nodi e archi */
     F_aggiungi_nodo_grafo_lista(&G,"Roma");
     F_aggiungi_nodo_grafo_lista(&G,"Milano");
     F_aggiungi_nodo_grafo_lista(&G,"Napoli");
@@ -56,8 +55,45 @@ void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
     F_aggiungi_nodo_grafo_lista(&G,"Tokyo");
     F_aggiungi_nodo_grafo_lista(&G,"Stoccolma");
     F_aggiungi_nodo_grafo_lista(&G,"Singapore");
-    F_aggiungi_arco_grafo_lista(&G,"Roma","Milano",1,60);
-
+    F_aggiungi_arco_grafo_lista(&G,"Roma","Milano",0.45,60.20);
+    F_aggiungi_arco_grafo_lista(&G,"Milano","Roma",0.45,80);
+    F_aggiungi_arco_grafo_lista(&G,"Napoli","Roma",0.30,25.14);
+    F_aggiungi_arco_grafo_lista(&G,"Napoli","Bari",2.50,30);
+    F_aggiungi_arco_grafo_lista(&G,"Napoli","Stoccolma",3.10,115.25);
+    F_aggiungi_arco_grafo_lista(&G,"Roma","Tokyo",15.12,1020.10);
+    F_aggiungi_arco_grafo_lista(&G,"Milano","Firenze",1.03,50);
+    F_aggiungi_arco_grafo_lista(&G,"Milano","Venezia",2,70);
+    F_aggiungi_arco_grafo_lista(&G,"Amsterdam","Milano",2.09,59.99);
+    F_aggiungi_arco_grafo_lista(&G,"Amsterdam","Firenze",3,55);
+    F_aggiungi_arco_grafo_lista(&G,"Firenze","Verona",1.05,25.19);
+    F_aggiungi_arco_grafo_lista(&G,"Firenze","Budapest",3,100);
+    F_aggiungi_arco_grafo_lista(&G,"Venezia","Mosca",4.35,199.99);
+    F_aggiungi_arco_grafo_lista(&G,"Verona","Venezia",1,20);
+    F_aggiungi_arco_grafo_lista(&G,"Venezia","Londra",2.22,90.15);
+    F_aggiungi_arco_grafo_lista(&G,"Venezia","Napoli",1.1,50);
+    F_aggiungi_arco_grafo_lista(&G,"Venezia","Cagliari",2,80);
+    F_aggiungi_arco_grafo_lista(&G,"Budapest","Berlino",2.05,60.60);
+    F_aggiungi_arco_grafo_lista(&G,"Berlino","Budapest",2,70);
+    F_aggiungi_arco_grafo_lista(&G,"Budapest","Amsterdam",3.30,90.30);
+    F_aggiungi_arco_grafo_lista(&G,"Mosca","Londra",10.45,200.98);
+    F_aggiungi_arco_grafo_lista(&G,"Londra","Singapore",9.05,150);
+    F_aggiungi_arco_grafo_lista(&G,"Londra","Palermo",8,180);
+    F_aggiungi_arco_grafo_lista(&G,"Cagliari","Napoli",1,70);
+    F_aggiungi_arco_grafo_lista(&G,"Cagliari","Palermo",2.30,90.10);
+    F_aggiungi_arco_grafo_lista(&G,"Bari","Cagliari",3,100);
+    F_aggiungi_arco_grafo_lista(&G,"Palermo","Olbia",1.10,50.05);
+    F_aggiungi_arco_grafo_lista(&G,"Olbia","Palermo",1,50);
+    F_aggiungi_arco_grafo_lista(&G,"Olbia","Singapore",10.10,190);
+    F_aggiungi_arco_grafo_lista(&G,"Olbia","Bari",1.03,30.99);
+    F_aggiungi_arco_grafo_lista(&G,"Olbia","Lisbona",2,90.90);
+    F_aggiungi_arco_grafo_lista(&G,"Bari","Ibiza",3.10,150);
+    F_aggiungi_arco_grafo_lista(&G,"Lisbona","Stoccolma",5.5,160);
+    F_aggiungi_arco_grafo_lista(&G,"Ibiza","Lisbona",6,120);
+    F_aggiungi_arco_grafo_lista(&G,"Stoccolma","Ibiza",3.02,140.40);
+    F_aggiungi_arco_grafo_lista(&G,"Tokyo","Stoccolma",7,900);
+    F_aggiungi_arco_grafo_lista(&G,"Tokyo","Amsterdam",9.10,1100);
+    F_aggiungi_arco_grafo_lista(&G,"Tokyo","Singapore",9.10,1200);
+    F_aggiungi_arco_grafo_lista(&G,"Singapore","Lisbona",8.11,900.90);
 
     C->strutturaGrafoPtr=G;
 }

@@ -17,7 +17,7 @@ struct struttura_grafo_lista_adiacenza_citta{
 };
 
 struct struttura_grafo_pesato{
-    int peso;
+    float peso;
 };
 
 typedef struct struttura_gestione_grafi *Grafo;

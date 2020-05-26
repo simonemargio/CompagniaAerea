@@ -85,7 +85,7 @@ void  STAMPA_GRAFO_CITTA(ListaAdj *L){
 
 void STAMPA_ARCHI_GRAFO(ListaAdj *L){
     if(!F_struttura_vuota(*L)){
-        printf("-(%s)(T:%d)(C:%d)",(*L)->nomeCittaPtr,(*L)->pesoTempoPtr->peso,(*L)->pesoCostoPtr->peso);
+        printf("->(%s)(T:%f)(C:%f)",(*L)->nomeCittaPtr,(*L)->pesoTempoPtr->peso,(*L)->pesoCostoPtr->peso);
         STAMPA_ARCHI_GRAFO(&(*L)->arcoPtr);
     }
 }
