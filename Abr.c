@@ -10,7 +10,7 @@ void F_inserisci_amministratore_abr(AlberoAmministratore *T, Amministratore ammi
         (*T)->nodoAmministratorePtr=amministratoreDaInserire;
     }else{
         Amministratore amministratoreAlbero=(*T)->nodoAmministratorePtr;
-        int confrontoAmministratori=F_confronto_nickname(amministratoreDaInserire->nicknamePtr,amministratoreAlbero->nicknamePtr);
+        int confrontoAmministratori=F_confronto_stringhe(amministratoreDaInserire->nicknamePtr,amministratoreAlbero->nicknamePtr);
         if(confrontoAmministratori<0) F_inserisci_amministratore_abr((&(*T)->sxPtr),amministratoreDaInserire);
         else if(confrontoAmministratori==0) printf("Amministratore (%s-%s) gia' presente.\n",amministratoreDaInserire->nicknamePtr,amministratoreDaInserire->email);
         else F_inserisci_amministratore_abr((&(*T)->dxPtr),amministratoreDaInserire);

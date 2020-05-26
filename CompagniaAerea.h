@@ -37,7 +37,7 @@ void F_polamento_automatico_amministratori(CompagniaAerea C, int numeroAmministr
 int F_struttura_vuota(void *S);
 void F_alloca_struttura_amministratore(Amministratore *nuovoAmministratore);
 void F_inserisci_informazioni_amministratore(Amministratore *nuovoAmministratore, char *nickname, char *email, char *password);
-int F_confronto_nickname(char *s1, char *s2);
+int F_confronto_stringhe(char *s1, char *s2);
 void F_esegui_popolamento_amministratori(CompagniaAerea C, int numeroAmministratore);
 void F_popoplamento_grafo_mappa_voli(CompagniaAerea C);
 void F_alloca_struttura_gestione_grafo_citta(CompagniaAerea *C);

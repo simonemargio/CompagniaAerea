@@ -56,6 +56,8 @@ void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
     F_aggiungi_nodo_grafo_lista(&G,"Tokyo");
     F_aggiungi_nodo_grafo_lista(&G,"Stoccolma");
     F_aggiungi_nodo_grafo_lista(&G,"Singapore");
+    F_aggiungi_arco_grafo_lista(&G,"Roma","Milano",1,60);
+
 
     C->strutturaGrafoPtr=G;
 }
@@ -139,7 +141,7 @@ int F_struttura_vuota(void *S){
     return (!S);
 }
 
-int F_confronto_nickname(char *s1, char *s2){
+int F_confronto_stringhe(char *s1, char *s2){
     return strcasecmp(s1,s2);
    // return strcmp(s1,s2);
 }

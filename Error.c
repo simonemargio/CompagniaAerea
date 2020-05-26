@@ -17,6 +17,9 @@ void F_error(int e){
         case 3:
             puts(" allocazione nodo amministratore.");
             break;
+        case 4:
+            puts(" allocazione struttura pesi.");
+            break;
     }
     puts("Uscita forzata.");
     exit(e);
