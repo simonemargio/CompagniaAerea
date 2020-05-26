@@ -9,8 +9,8 @@
   * [Scali](#Scali)
   * [Punti](#Punti)
 2. [Strutture](#Strutture)    
+  * [Grafo Citta](#Grafo-citta)
   * [Generiche](#Generiche)
-  * [Specifiche](#Specifiche)
 3. [Documentazione](#Documentazione)  
 
 
@@ -108,15 +108,16 @@ I punti dell'utente sono dati in base a quanto ha speso per il volo diviso 2 o 3
 # Strutture
 L'idea generale è di avere un'unica struttura princiaple che mantiene puntatori a tutte le altre strutture. Si ottiene affidablità e manutenibilità.
 
+## Grafo Citta
+
+![GrafoCitta](https://user-images.githubusercontent.com/22590804/82929586-357b6480-9f84-11ea-91e8-9f320d9837b9.png)
+Cliccare sull'immagine per ingrandirla.
+
 ## Generiche
 **Città**: grafo con liste di adiacenza implementate con liste di liste.\
 **Utenti registrati**: albero abr ordinato tramite nickname.\
 **Amministratori registrati**: albero abr ordinato tramite nickname amministratore.\
 **Coda di priorità**: tale struttura viene usata per svolgere l'algoritmo di dijkstra. La struttura più efficiente per la coda è un albero heap.
-
-## Specifiche
-Da vedere.
-
 
 # Documentazione
 La documentazione sarà fatta con Latex.
