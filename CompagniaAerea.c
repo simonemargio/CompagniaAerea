@@ -5,6 +5,8 @@
 #include "Abr.h"
 #include "Error.h"
 #include "Grafo.h"
+#include "Heap.h"
+#include "Dijkstra.h"
 #define LUNGHEZZA_STRINGHE 20
 
 
@@ -14,14 +16,22 @@ void F_gestione_compagnia_aerea(){
     F_alloca_struttura_gestione_grafo_citta(&C);
     F_popolamento_amministratori(C);
     F_popoplamento_grafo_mappa_voli(C);
-    F_engine_compagnia_aerea(C);
+
+    /* Test di Dijkstra */
+    F_inizializza_dijkstra(C,"Londra",15);
+
+   // F_engine_compagnia_aerea(C);
+
 
     /* Deallocare le strutture */
 
+
+
+
     /* Funzioni di Test */
-    puts("Amministratori:");
+  /* puts("Amministratori:");
     AlberoAmministratore T=C->strutturaAmministratoriPtr;
-    STAMPA_AMMINISTRATORI(T);
+    STAMPA_AMMINISTRATORI(T);*/
     puts("\nCitta presenti:");
     Grafo G=C->strutturaGrafoPtr;
     ListaAdj L=G->StrutturaGrafoPtr;
@@ -403,6 +413,7 @@ void F_alloca_struttura_compagnia_aerea(CompagniaAerea *C){
     (*C)->strutturaUtentiPtr=NULL;
     (*C)->strutturaAmministratoriPtr=NULL;
     (*C)->strutturaGrafoPtr=NULL;
+    (*C)->strutturaAlberoHeap=NULL;
 }
 
 
