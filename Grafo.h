@@ -9,6 +9,7 @@ struct struttura_gestione_grafi{
 
 struct struttura_grafo_lista_adiacenza_citta{
     char *nomeCittaPtr;
+    int visite;
 
     struct struttura_grafo_pesato *pesoTempoPtr;
     struct struttura_grafo_pesato *pesoCostoPtr;
@@ -30,7 +31,9 @@ void F_aggiungi_arco_grafo_lista(Grafo *G, char *cittaPartenza, char *cittaArriv
 void F_inserisci_arco_grafo_lista(ListaAdj *L, char *nomeCittaDaInserire, float tempo, float costo);
 ListaAdj F_cerca_nodo_grafo_lista(ListaAdj *L, char *cittaDaTrovare);
 void F_alloca_strutture_peso_tempo_e_costo(ListaAdj *L, float tempo, float costo);
-
+void F_dealloca_archi_grafo_lista(ListaAdj *L);
+void F_dealloca_nodo_grafo_lista(ListaAdj *L, char *cittaDaEliminare);
+void F_dealloca_arco_grafo_lista(ListaAdj *L, char *cittaDaEliminare);
 
 /* Funzione di Test */
 void  STAMPA_GRAFO_CITTA(ListaAdj *L);

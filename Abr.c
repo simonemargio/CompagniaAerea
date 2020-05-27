@@ -25,3 +25,54 @@ void F_alloca_struttura_amministratore_abr(AlberoAmministratore *nuovoAmministra
     (*nuovoAmministratore)->sxPtr=NULL;
     (*nuovoAmministratore)->dxPtr=NULL;
 }
+
+
+void F_inserisci_utente_abr(AlberoUtente *T, Utente utenteDaInserire){
+    if(F_struttura_vuota(*T)){
+        F_alloca_struttura_utente_abr(T);
+        (*T)->nodoUtentePtr=utenteDaInserire;
+    }else{
+        Utente utenteAlbero=(*T)->nodoUtentePtr;
+        int confrontoUtenti=F_confronto_stringhe(utenteDaInserire->usernamePtr,utenteAlbero->usernamePtr);
+        if(confrontoUtenti<0) F_inserisci_utente_abr((&(*T)->sxPtr),utenteDaInserire);
+        else if(confrontoUtenti==0) printf("Utente (%s-%s) gia' presente.\n",utenteDaInserire->usernamePtr,utenteDaInserire->email);
+        else F_inserisci_utente_abr((&(*T)->dxPtr),utenteDaInserire);
+    }
+}
+
+
+void F_alloca_struttura_utente_abr(AlberoUtente *nuovoUtente){
+    (*nuovoUtente)=(struct struttura_nodo_albero_utente*)malloc(sizeof(struct struttura_nodo_albero_utente));
+    if(F_struttura_vuota(*nuovoUtente)) F_error(5);
+    (*nuovoUtente)->nodoUtentePtr=NULL;
+    (*nuovoUtente)->sxPtr=NULL;
+    (*nuovoUtente)->dxPtr=NULL;
+}
+
+Amministratore F_cerca_amministratore_abr(AlberoAmministratore *T, char *amministratoreDaCercare){
+    if(F_struttura_vuota(*T)) return NULL;
+    else{
+        Amministratore amministratoreAlbero=(*T)->nodoAmministratorePtr;
+        int confrontoAmministratori=F_confronto_stringhe(amministratoreDaCercare,amministratoreAlbero->nicknamePtr);
+        if(confrontoAmministratori==0){
+            return amministratoreAlbero;
+        }else{
+            if(confrontoAmministratori<0) return F_cerca_amministratore_abr((&(*T)->sxPtr),amministratoreDaCercare);
+            else return F_cerca_amministratore_abr((&(*T)->dxPtr), amministratoreDaCercare);
+        }
+    }
+}
+
+Utente F_cerca_utente_abr(AlberoUtente *T, char *utenteDaCercare){
+    if(F_struttura_vuota(*T)) return NULL;
+    else{
+        Utente utenteAlbero=(*T)->nodoUtentePtr;
+        int confrontoUtenti=F_confronto_stringhe(utenteDaCercare,utenteAlbero->usernamePtr);
+        if(confrontoUtenti==0){
+            return utenteAlbero;
+        }else{
+            if(confrontoUtenti<0) return F_cerca_utente_abr((&(*T)->sxPtr),utenteDaCercare);
+            else return F_cerca_utente_abr((&(*T)->dxPtr), utenteDaCercare);
+        }
+    }
+}

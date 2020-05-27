@@ -20,6 +20,7 @@ void F_alloca_nodo_grafo_lista(ListaAdj *L, char *nomeCitta){
         (*L)=(struct struttura_grafo_lista_adiacenza_citta*)malloc(sizeof(struct struttura_grafo_lista_adiacenza_citta));
         if(F_struttura_vuota(*L)) exit(2);
         (*L)->nomeCittaPtr=nomeCitta;
+        (*L)->visite=0;
         (*L)->nextPtr=NULL;
         (*L)->arcoPtr=NULL;
         (*L)->pesoCostoPtr=NULL;
@@ -70,6 +71,37 @@ ListaAdj F_cerca_nodo_grafo_lista(ListaAdj *L, char *cittaDaTrovare){
     int cittaTrovata=F_confronto_stringhe(cittaDaTrovare,(*L)->nomeCittaPtr);
     if(cittaTrovata==0) return (*L);
     return F_cerca_nodo_grafo_lista((&(*L)->nextPtr),cittaDaTrovare);
+}
+
+
+void F_dealloca_archi_grafo_lista(ListaAdj *L){
+    if (!F_struttura_vuota(*L)) {
+        F_dealloca_archi_grafo_lista((&(*L)->arcoPtr));
+        free(*L);
+        *L=NULL;
+    }
+}
+
+void F_dealloca_nodo_grafo_lista(ListaAdj *L, char *cittaDaEliminare){
+    ListaAdj aux=(*L);
+    if(*L){
+        int cittaTrovata=F_confronto_stringhe(cittaDaEliminare,(*L)->nomeCittaPtr);
+        if(cittaTrovata==0){
+            (*L)=(aux)->nextPtr;
+            free(aux);
+        }else F_dealloca_nodo_grafo_lista((&(*L)->nextPtr),cittaDaEliminare);
+    }
+}
+
+void F_dealloca_arco_grafo_lista(ListaAdj *L, char *cittaDaEliminare){
+    ListaAdj aux=(*L);
+    if(*L){
+        int cittaTrovata=F_confronto_stringhe(cittaDaEliminare,(*L)->nomeCittaPtr);
+        if(cittaTrovata==0){
+            (*L)=(aux)->arcoPtr;
+            free(aux);
+        }else F_dealloca_arco_grafo_lista((&(*L)->arcoPtr),cittaDaEliminare);
+    }
 }
 
 

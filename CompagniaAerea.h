@@ -12,7 +12,7 @@ struct struttura_gestione_compagnia_aerea{
 struct struttua_gestione_utente{
     char *nomePtr;
     char *cognomePtr;
-    char *nicknamePtr;
+    char *usernamePtr;
     char *email;
     char *passwordPtr;
     int punti;
@@ -41,6 +41,24 @@ int F_confronto_stringhe(char *s1, char *s2);
 void F_esegui_popolamento_amministratori(CompagniaAerea C, int numeroAmministratore);
 void F_popoplamento_grafo_mappa_voli(CompagniaAerea C);
 void F_alloca_struttura_gestione_grafo_citta(CompagniaAerea *C);
+void F_engine_compagnia_aerea(CompagniaAerea C);
+int F_chiedi_intero(char *s,int dim,char minimo,char massimo);
+void F_login_utente_e_amministratore(CompagniaAerea C);
+char *F_chiedi_stringa(char *s);
+void F_stampa_testa_compagnia_aerea_login();
+void F_gestione_principale_amministratore(CompagniaAerea C);
+void F_gestione_principale_utente(CompagniaAerea C);
+void F_utente_nuova_prenotazione(CompagniaAerea C);
+void F_aggiungi_destinazione_amministratore(CompagniaAerea C);
+void F_aggiungi_volo_amministratore(CompagniaAerea C);
+void F_elimina_destinazione_amministratore(CompagniaAerea C);
+void F_elimina_volo_amministratore(CompagniaAerea C);
+void F_registrazione_utente(CompagniaAerea C);
+void F_alloca_struttura_utente(Utente *nuovoUtente);
+void F_inserisci_informazioni_utente(Utente *nuovoUtente, char *nickname, char *email, char *password, char *nome, char *cognome);
+void F_stampa_testa_compagnia_aerea_registrazione();
+void F_stampa_informazioni_utente_registrato(Utente utenteRegistrato);
+
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione();
 void F_stampa_menu_gestione_compagnia_aerea_accesso_utente_registrato();

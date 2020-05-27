@@ -23,8 +23,10 @@ typedef struct struttura_nodo_albero_amministratore *AlberoAmministratore;
 
 void F_inserisci_amministratore_abr(AlberoAmministratore *T, Amministratore amministratoreDaInserire);
 void F_alloca_struttura_amministratore_abr(AlberoAmministratore *nuovoAmministratore);
-
-
+Amministratore F_cerca_amministratore_abr(AlberoAmministratore *T, char *amministratoreDaCercare);
+Utente F_cerca_utente_abr(AlberoUtente *T, char *utenteDaCercare);
+void F_alloca_struttura_utente_abr(AlberoUtente *nuovoUtente);
+void F_inserisci_utente_abr(AlberoUtente *T, Utente utenteDaInserire);
 
 /* Funzioni di Test */
 void STAMPA_AMMINISTRATORI(AlberoAmministratore T);

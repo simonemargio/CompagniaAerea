@@ -20,6 +20,12 @@ void F_error(int e){
         case 4:
             puts(" allocazione struttura pesi.");
             break;
+        case 5:
+            puts(" allocazione nodo utente.");
+            break;
+        case 6:
+            puts(" allocazione utente.");
+            break;
     }
     puts("Uscita forzata.");
     exit(e);
