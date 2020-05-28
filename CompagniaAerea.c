@@ -5,6 +5,8 @@
 #include "Abr.h"
 #include "Error.h"
 #include "Grafo.h"
+#include "Dijkstra.h"
+
 #define LUNGHEZZA_STRINGHE 20
 
 
@@ -16,6 +18,9 @@ void F_gestione_compagnia_aerea(){
     F_popoplamento_grafo_mappa_voli(C);
 
     /* Test di Dijkstra */
+    Grafo G=C->strutturaGrafoPtr;
+    ListaAdj nodoSorgente=G->StrutturaGrafoPtr;
+    F_inizializza_dijkstra(C,nodoSorgente);
 
 
    // F_engine_compagnia_aerea(C);
@@ -31,7 +36,7 @@ void F_gestione_compagnia_aerea(){
     AlberoAmministratore T=C->strutturaAmministratoriPtr;
     STAMPA_AMMINISTRATORI(T);*/
     puts("\nCitta presenti:");
-    Grafo G=C->strutturaGrafoPtr;
+
     ListaAdj L=G->StrutturaGrafoPtr;
     STAMPA_GRAFO_CITTA(&L);
 }

@@ -37,6 +37,11 @@ void F_alloca_struttura_generale_gestione_albero_heap(StrutturaHeap *H);
 void F_alloca_nodo_albero_heap(AlberoHeap *T, char *nomeCittaDaInserire, int indiceCittaDaInserire, float *stimaCitta);
 void F_crea_albero_heap(CompagniaAerea C,StrutturaHeap Heap, ListaAdj nodoSorgente);
 int F_ottieni_indice_nodo_grafo_lista_da_nome_citta(ListaAdj *L,char *nomeCitta,int indiceNodoCitta);
-AlberoHeap F_crea_nodo_albero_heap(StrutturaHeap Heap, int indiceNodo);
+AlberoHeap F_crea_nodo_albero_heap(StrutturaHeap Heap, int indiceNodo, char *nomeCitta);
+AlberoHeap F_inserisci_nodo_albero_heap(AlberoHeap T, AlberoHeap nuovoNodo, int indiceInserimentoNodo);
+int *F_ottieni_bit(int n);
+int F_salta_zero_bit(int *bits);
+
+void STAMPAALBEROHEAP(AlberoHeap H);
 
 #endif //COMPAGNIAAEREA_HEAP_H

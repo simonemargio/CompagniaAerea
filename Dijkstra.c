@@ -18,6 +18,14 @@ void F_inizializza_dijkstra(CompagniaAerea C, ListaAdj nodoSorgente){
     Heap->dPtr=D;
 
     F_crea_albero_heap(C,Heap,nodoSorgente);
+    STAMPAALBEROHEAP(Heap->alberoHeapPtr);
+
+
+
+}
+
+void F_dijkstra(CompagniaAerea C,StrutturaHeap H){
+
 }
 
 void F_alloca_array_predecessore_p(Predecessore *P, int numeroNodi){
