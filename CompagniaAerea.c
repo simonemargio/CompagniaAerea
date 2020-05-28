@@ -5,8 +5,6 @@
 #include "Abr.h"
 #include "Error.h"
 #include "Grafo.h"
-#include "Heap.h"
-#include "Dijkstra.h"
 #define LUNGHEZZA_STRINGHE 20
 
 
@@ -18,7 +16,7 @@ void F_gestione_compagnia_aerea(){
     F_popoplamento_grafo_mappa_voli(C);
 
     /* Test di Dijkstra */
-    F_inizializza_dijkstra(C,"Londra",15);
+
 
    // F_engine_compagnia_aerea(C);
 
