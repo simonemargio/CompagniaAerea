@@ -39,6 +39,24 @@ void F_dijkstra(CompagniaAerea C,StrutturaHeap H){
 
 }
 
+void F_relax(StrutturaHeap H, AlberoHeap u, int indiceU, int indiceV, float arco){
+    Distanza D=H->dPtr;
+    float dV=D[indiceV].stima;
+    float dU=D[indiceU].stima;
+
+    if(dU!=INFINITO){
+        if(dV==INFINITO ||  (dV> (dU + arco))){
+
+            int i=F_cerca_indice_nodo_per_decrease(H,indiceV);
+            F_decrease_key_albero_heap(H,i,(dU+arco));
+            Predecessore P=H->pPtr;
+            P[indiceV].nodoPredecessore=u;
+        }
+    }
+
+
+}
+
 void F_alloca_array_predecessore_p(Predecessore *P, int numeroNodi){
     int indiceScorrimento=0;
     (*P)=(struct struttura_predecessore_p*)malloc(numeroNodi* sizeof(struct struttura_predecessore_p));
@@ -49,5 +67,19 @@ void F_alloca_array_distanza_d(Distanza *D, int numeroNodi){
     int indiceScorrimento=0;
     (*D)=(struct struttura_distanza_d*)malloc(numeroNodi* sizeof(struct struttura_distanza_d));
     for(;indiceScorrimento<numeroNodi;indiceScorrimento++) (*D)[indiceScorrimento].stima=INFINITO;
+}
+
+
+int F_cerca_indice_nodo_per_decrease(StrutturaHeap H, int indiceNodoDaCercare){
+    AlberoHeap T=H->alberoHeapPtr;
+    int nodoTrovato=1, indiceNodo=-1;
+
+    while(T && nodoTrovato){
+        indiceNodo++;
+        AlberoHeap nodo=F_preleva_nodo_albero_heap(H,indiceNodo);
+        if(nodo && nodo->indicePosizioneCittaPtr==indiceNodoDaCercare) nodoTrovato=0;
+    }
+
+    return indiceNodo;
 }
 

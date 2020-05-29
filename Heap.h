@@ -51,6 +51,8 @@ int F_SecondCheck_Alebro_Min(StrutturaHeap H, int r,int mas);
 void F_scambio_nodi_albero_heap(StrutturaHeap H,int i,int mas);
 AlberoHeap F_copia_valori_albero_heap(AlberoHeap minT, AlberoHeap newT);
 void F_elimina_foglia_albero_heap(StrutturaHeap H);
+void F_decrease_key_albero_heap(StrutturaHeap H,int i, float val);
+
 
 void STAMPAALBEROHEAP(AlberoHeap H);
 

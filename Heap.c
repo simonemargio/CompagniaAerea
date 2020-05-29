@@ -3,6 +3,7 @@
 #include "CompagniaAerea.h"
 #include "Grafo.h"
 #include "Heap.h"
+#include "Error.h"
 #define DIMENSIONE_ARRAY_MASCHERA_BINARIA 32
 #define INFINITO -1
 
@@ -266,6 +267,32 @@ int F_salta_zero_bit(int *bits)
     }
     return j;
 }
+
+void F_decrease_key_albero_heap(StrutturaHeap H,int i, float val){
+    AlberoHeap nodo=F_preleva_nodo_albero_heap(H,i);
+    float *stimaNodo=nodo->stimaTempoOppureCostoPtr;
+
+
+    if(*stimaNodo==INFINITO || val < *stimaNodo){
+        *stimaNodo=val;
+
+        AlberoHeap nodoPadre=F_preleva_nodo_albero_heap(H,((i+1)/2)-1);
+        float *stimaPadre=nodoPadre->stimaTempoOppureCostoPtr;
+
+        while( (i>0 && *stimaPadre==INFINITO) || (i>0 && *stimaPadre > *stimaNodo) ){
+            F_scambio_nodi_albero_heap(H,i,((i+1)/2)-1);
+
+            i = ((i+1)/2)-1;
+            nodoPadre=F_preleva_nodo_albero_heap(H,((i+1)/2)-1);
+            nodo=F_preleva_nodo_albero_heap(H,i);
+
+            stimaPadre=nodoPadre->stimaTempoOppureCostoPtr;
+            stimaNodo=nodo->stimaTempoOppureCostoPtr;
+        }
+    } else F_error(3);
+
+}
+
 
 
 AlberoHeap F_crea_nodo_albero_heap(StrutturaHeap Heap, int indiceNodo, char *nomeCitta){
