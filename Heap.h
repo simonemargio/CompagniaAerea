@@ -41,6 +41,16 @@ AlberoHeap F_crea_nodo_albero_heap(StrutturaHeap Heap, int indiceNodo, char *nom
 AlberoHeap F_inserisci_nodo_albero_heap(AlberoHeap T, AlberoHeap nuovoNodo, int indiceInserimentoNodo);
 int *F_ottieni_bit(int n);
 int F_salta_zero_bit(int *bits);
+AlberoHeap F_estrai_minimo_albero_heap(StrutturaHeap H);
+void F_heapify(StrutturaHeap H, int i);
+int F_HeapDx(int i);
+int F_HeapSx(int i);
+AlberoHeap F_preleva_nodo_albero_heap(StrutturaHeap H,int indice);
+int F_FirstCheck_Albero_Min(StrutturaHeap H,int l,int i);
+int F_SecondCheck_Alebro_Min(StrutturaHeap H, int r,int mas);
+void F_scambio_nodi_albero_heap(StrutturaHeap H,int i,int mas);
+AlberoHeap F_copia_valori_albero_heap(AlberoHeap minT, AlberoHeap newT);
+void F_elimina_foglia_albero_heap(StrutturaHeap H);
 
 void STAMPAALBEROHEAP(AlberoHeap H);
 

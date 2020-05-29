@@ -4,6 +4,7 @@
 #include "Grafo.h"
 #include "Heap.h"
 #define DIMENSIONE_ARRAY_MASCHERA_BINARIA 32
+#define INFINITO -1
 
 void STAMPAALBEROHEAP(AlberoHeap H){
     if(H){
@@ -13,6 +14,171 @@ void STAMPAALBEROHEAP(AlberoHeap H){
     }
 
 }
+
+
+void F_heapify(StrutturaHeap H, int i){
+    int l=F_HeapSx(i);
+    int r = F_HeapDx(i);
+
+    int mas = F_FirstCheck_Albero_Min(H,l,i);
+    mas = F_SecondCheck_Alebro_Min(H,r,mas);
+
+    if(mas!=i){
+
+        F_scambio_nodi_albero_heap(H,i,mas);
+        F_heapify(H,mas);
+    }
+}
+
+int F_HeapSx(int i){
+    i=(2*i)+1;
+
+    return i;
+}
+
+int F_HeapDx(int i){
+    i=(2*i)+2;
+
+    return i;
+}
+
+int F_FirstCheck_Albero_Min(StrutturaHeap H,int l,int i){
+    int mas=i;
+
+    AlberoHeap nodoL=F_preleva_nodo_albero_heap(H,l);
+    AlberoHeap nodoI=F_preleva_nodo_albero_heap(H,i);
+
+
+    if(l<H->heapsize){
+        float *stimaL=nodoL->stimaTempoOppureCostoPtr;
+        float *stimaI=nodoI->stimaTempoOppureCostoPtr;
+
+        float prioritaL=*stimaL;
+        float prioritaI=*stimaI;
+
+        if( (prioritaI==INFINITO && prioritaL!=INFINITO) || (prioritaL!=INFINITO && prioritaI!=INFINITO && prioritaL<prioritaI)) mas=l;
+        else mas=i;
+
+    }
+
+    return mas;
+}
+
+int F_SecondCheck_Alebro_Min(StrutturaHeap H, int r,int mas){
+    AlberoHeap nodoR=F_preleva_nodo_albero_heap(H,r);
+    AlberoHeap nodoMas=F_preleva_nodo_albero_heap(H,mas);
+
+    if(r<H->heapsize){
+        float *stimaR=nodoR->stimaTempoOppureCostoPtr;
+        float *stimaMas=nodoMas->stimaTempoOppureCostoPtr;
+
+        float prioritaR=*stimaR;
+        float prioritaMas=*stimaMas;
+
+        if((prioritaR!=INFINITO && prioritaMas==INFINITO) ||   (prioritaMas!=INFINITO && prioritaR!=INFINITO && prioritaR<prioritaMas)) mas=r;
+
+    }
+
+    return mas;
+}
+
+
+void F_scambio_nodi_albero_heap(StrutturaHeap H,int i,int mas){
+    AlberoHeap nodoI=F_preleva_nodo_albero_heap(H,i);
+    AlberoHeap nodoMas=F_preleva_nodo_albero_heap(H,mas);
+
+    float *stimaI=nodoI->stimaTempoOppureCostoPtr;
+    char *nomeCittaI=nodoI->nomeCitta;
+    int indicePosozioneI=nodoI->indicePosizioneCittaPtr;
+
+    nodoI->stimaTempoOppureCostoPtr=nodoMas->stimaTempoOppureCostoPtr;
+    nodoI->indicePosizioneCittaPtr=nodoMas->indicePosizioneCittaPtr;
+    nodoI->nomeCitta=nodoMas->nomeCitta;
+
+    nodoMas->nomeCitta=nomeCittaI;
+    nodoMas->indicePosizioneCittaPtr=indicePosozioneI;
+    nodoMas->stimaTempoOppureCostoPtr=stimaI;
+
+}
+
+
+
+AlberoHeap F_estrai_minimo_albero_heap(StrutturaHeap H){
+    AlberoHeap minimoT=H->alberoHeapPtr;
+    AlberoHeap nuovoT=NULL;
+
+    if(minimoT){
+         nuovoT=(struct struttura_nodo_albero_heap*)malloc(sizeof(struct struttura_nodo_albero_heap));
+         nuovoT=F_copia_valori_albero_heap(minimoT,nuovoT);
+         F_scambio_nodi_albero_heap(H,0,H->heapsize-1);
+         F_elimina_foglia_albero_heap(H);
+         F_heapify(H,0);
+    }
+
+    return nuovoT;
+}
+
+void F_elimina_foglia_albero_heap(StrutturaHeap H){
+    AlberoHeap ultimaFoglia=F_preleva_nodo_albero_heap(H,H->heapsize-1);
+    AlberoHeap padreFoglia=F_preleva_nodo_albero_heap(H,((H->heapsize-2)/2));
+
+    if(padreFoglia){
+        if(padreFoglia->dxPtr != NULL){
+            padreFoglia->dxPtr = NULL;
+        }
+        else{
+            if(padreFoglia->sxPtr != NULL){
+                padreFoglia->sxPtr = NULL;
+            }
+        }
+    }
+
+    H->heapsize=((H->heapsize)-1);
+    if(H->heapsize>=0){
+        ultimaFoglia->sxPtr=NULL;
+        ultimaFoglia->dxPtr=NULL;
+        ultimaFoglia->stimaTempoOppureCostoPtr=NULL;
+    }
+}
+
+AlberoHeap F_copia_valori_albero_heap(AlberoHeap minT, AlberoHeap newT){
+    float *stimaT=minT->stimaTempoOppureCostoPtr;
+    int indiceCittaT=minT->indicePosizioneCittaPtr;
+    char *nomeCittaT=minT->nomeCitta;
+
+    newT->indicePosizioneCittaPtr=indiceCittaT;
+    newT->nomeCitta=nomeCittaT;
+
+    minT->stimaTempoOppureCostoPtr=NULL;
+    newT->stimaTempoOppureCostoPtr=stimaT;
+
+    return newT;
+}
+
+AlberoHeap F_preleva_nodo_albero_heap(StrutturaHeap H,int indice){
+    AlberoHeap nodo = H->alberoHeapPtr;
+
+
+    int *bits = F_ottieni_bit(indice+1); // Ottengo la posizione in binario del nodo
+
+    int j=F_salta_zero_bit(bits); // Salto gli zero e il primo uno in bit
+
+    for(;j>=0;j--)  // Prelevo il nodo spostandomi con i bit restanti
+    {
+        if(bits[j]==1)
+        {
+            nodo=nodo->dxPtr;
+        }
+        else
+        {
+            nodo=nodo->sxPtr;
+        }
+    }
+    free(bits);
+
+    return nodo;
+}
+
 
 void F_crea_albero_heap(CompagniaAerea C,StrutturaHeap Heap, ListaAdj nodoSorgente){
     Distanza D=Heap->dPtr; Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;

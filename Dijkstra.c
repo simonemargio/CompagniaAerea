@@ -4,7 +4,7 @@
 #include "Grafo.h"
 #include "Heap.h"
 #include "Dijkstra.h"
-
+#define INFINITO -1
 
 void F_inizializza_dijkstra(CompagniaAerea C, ListaAdj nodoSorgente){
     Predecessore P=NULL; Distanza D=NULL; StrutturaHeap Heap=NULL; AlberoHeap H=NULL;
@@ -25,6 +25,17 @@ void F_inizializza_dijkstra(CompagniaAerea C, ListaAdj nodoSorgente){
 }
 
 void F_dijkstra(CompagniaAerea C,StrutturaHeap H){
+   AlberoHeap T=H->alberoHeapPtr;
+
+   while(T){
+        AlberoHeap u=F_estrai_minimo_albero_heap(H);
+
+        if(u){
+
+        }
+
+       T=H->alberoHeapPtr;
+   }
 
 }
 
@@ -37,6 +48,6 @@ void F_alloca_array_predecessore_p(Predecessore *P, int numeroNodi){
 void F_alloca_array_distanza_d(Distanza *D, int numeroNodi){
     int indiceScorrimento=0;
     (*D)=(struct struttura_distanza_d*)malloc(numeroNodi* sizeof(struct struttura_distanza_d));
-    for(;indiceScorrimento<numeroNodi;indiceScorrimento++) (*D)[indiceScorrimento].stima=-1;
+    for(;indiceScorrimento<numeroNodi;indiceScorrimento++) (*D)[indiceScorrimento].stima=INFINITO;
 }
 
