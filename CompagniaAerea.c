@@ -17,11 +17,30 @@ void F_gestione_compagnia_aerea(){
     F_popolamento_amministratori(C);
     F_popoplamento_grafo_mappa_voli(C);
 
-    /* Test di Dijkstra */
+
     Grafo G=C->strutturaGrafoPtr;
+    puts("\nCitta presenti:");
+    ListaAdj L=G->StrutturaGrafoPtr;
+    STAMPA_GRAFO_CITTA(&L);
+
+    /* Test di Dijkstra */
+
     ListaAdj nodoSorgente=G->StrutturaGrafoPtr;
+
+    int partenza=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,"Napoli",0);
+    printf("%d",partenza);
+    nodoSorgente=F_ottieni_nome_citta_nodo_grafo_lista_da_indice(&L,partenza,0);
+
     F_inizializza_dijkstra(C,nodoSorgente);
 
+    StrutturaHeap H=C->strutturaGestioneHeapPtr;
+    Predecessore P=H->pPtr;
+
+
+
+    F_stampa_percorso(L,P,2,19);
+
+    // void F_stampa_percorso(ListaAdj L,Predecessore P,int indiceCittaPartenza,int indiceCittaArrivo)
 
    // F_engine_compagnia_aerea(C);
 
@@ -35,10 +54,7 @@ void F_gestione_compagnia_aerea(){
   /* puts("Amministratori:");
     AlberoAmministratore T=C->strutturaAmministratoriPtr;
     STAMPA_AMMINISTRATORI(T);*/
-    puts("\nCitta presenti:");
 
-    ListaAdj L=G->StrutturaGrafoPtr;
-    STAMPA_GRAFO_CITTA(&L);
 }
 
 void F_engine_compagnia_aerea(CompagniaAerea C){
@@ -416,7 +432,7 @@ void F_alloca_struttura_compagnia_aerea(CompagniaAerea *C){
     (*C)->strutturaUtentiPtr=NULL;
     (*C)->strutturaAmministratoriPtr=NULL;
     (*C)->strutturaGrafoPtr=NULL;
-    (*C)->strutturaAlberoHeap=NULL;
+    (*C)->strutturaGestioneHeapPtr=NULL;
 }
 
 

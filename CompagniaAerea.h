@@ -6,7 +6,7 @@ struct struttura_gestione_compagnia_aerea{
     struct struttura_nodo_albero_utente *strutturaUtentiPtr;
     struct struttura_nodo_albero_amministratore *strutturaAmministratoriPtr;
     struct struttura_gestione_grafi *strutturaGrafoPtr;
-    struct struttura_gestione_heap *strutturaAlberoHeap;
+    struct struttura_gestione_albero_heap *strutturaGestioneHeapPtr;
 };
 
 
