@@ -16,33 +16,23 @@ void F_gestione_compagnia_aerea(){
     F_alloca_struttura_gestione_grafo_citta(&C);
     F_popolamento_amministratori(C);
     F_popoplamento_grafo_mappa_voli(C);
+    F_engine_compagnia_aerea(C);
 
 
-    Grafo G=C->strutturaGrafoPtr;
-    puts("\nCitta presenti:");
-    ListaAdj L=G->StrutturaGrafoPtr;
-    STAMPA_GRAFO_CITTA(&L);
 
     /* Test di Dijkstra */
-
-    ListaAdj nodoSorgente=G->StrutturaGrafoPtr;
-
-    int partenza=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,"Napoli",0);
+    /*ListaAdj nodoSorgente=G->StrutturaGrafoPtr;
+    int partenza=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,"Cagliari",0);
     printf("%d",partenza);
     nodoSorgente=F_ottieni_nome_citta_nodo_grafo_lista_da_indice(&L,partenza,0);
-
     F_inizializza_dijkstra(C,nodoSorgente);
-
     StrutturaHeap H=C->strutturaGestioneHeapPtr;
     Predecessore P=H->pPtr;
+    F_stampa_percorso(L,P,4,14);*/
 
 
 
-    F_stampa_percorso(L,P,2,19);
 
-    // void F_stampa_percorso(ListaAdj L,Predecessore P,int indiceCittaPartenza,int indiceCittaArrivo)
-
-   // F_engine_compagnia_aerea(C);
 
 
     /* Deallocare le strutture */
@@ -51,7 +41,12 @@ void F_gestione_compagnia_aerea(){
 
 
     /* Funzioni di Test */
-  /* puts("Amministratori:");
+  /*  Grafo G=C->strutturaGrafoPtr;
+    puts("\nCitta presenti:");
+    ListaAdj L=G->StrutturaGrafoPtr;
+    STAMPA_GRAFO_CITTA(&L);
+
+    puts("Amministratori:");
     AlberoAmministratore T=C->strutturaAmministratoriPtr;
     STAMPA_AMMINISTRATORI(T);*/
 
