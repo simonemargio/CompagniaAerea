@@ -124,7 +124,7 @@ AlberoHeap F_estrai_minimo_albero_heap(StrutturaHeap H){
      //    puts("STAMPO NUOVO ALERO ");
      //   STAMPAALBEROHEAP(H->alberoHeapPtr);
     }
-    if(H->heapsize<0) { puts("A"); nuovoT=NULL; H->alberoHeapPtr=NULL;}
+    if(H->heapsize<0) { nuovoT=NULL; H->alberoHeapPtr=NULL;}
 
     return nuovoT;
 }

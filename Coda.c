@@ -47,3 +47,25 @@ void STAMPACODA(Coda *Q){
     }
 
 }
+
+void F_alloca_elemento_coda_prenotazione(CodaPrenotazione *C){
+    (*C)=(struct struttura_elemento_coda_prenotazione*)malloc(sizeof(struct struttura_elemento_coda_prenotazione));
+    if(F_struttura_vuota(*C)) F_error(7);
+    (*C)->costoVolo=0;
+    (*C)->tempoVolo=0;
+    (*C)->nextPtr=NULL;
+    (*C)->cittaArrivo=NULL;
+    (*C)->cittaPartenza=NULL;
+}
+
+void F_enqueue_coda_prenotazione(CodaPrenotazione *C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo){
+    if(F_struttura_vuota(*C)) {
+        F_alloca_elemento_coda_prenotazione(C);
+        (*C)->cittaPartenza=cittaPartenza;
+        (*C)->cittaArrivo=cittaArrivo;
+        (*C)->costoVolo=costoVolo;
+        (*C)->tempoVolo=tempoVolo;
+    }else{
+        F_enqueue_coda_prenotazione((&(*C)->nextPtr),cittaPartenza, cittaArrivo,costoVolo,tempoVolo);
+    }
+}

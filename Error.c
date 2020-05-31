@@ -26,6 +26,9 @@ void F_error(int e){
         case 6:
             puts(" allocazione utente.");
             break;
+        case 7:
+            puts(" allocazione coda prenotzione.");
+            break;
     }
     puts("Uscita forzata.");
     exit(e);

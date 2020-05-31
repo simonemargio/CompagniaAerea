@@ -11,8 +11,8 @@ struct struttura_elemento_coda{
 struct struttura_elemento_coda_prenotazione{
     char *cittaPartenza;
     char *cittaArrivo;
-    float pesoCosto;
-    float pesoTempo;
+    float costoVolo;
+    float tempoVolo;
     struct struttura_elemento_coda_prenotazione *nextPtr;
 };
 
@@ -24,6 +24,9 @@ void F_alloca_elemento_coda(Coda *C);
 void F_enqueue(Coda *C, void *elementoDaInserire, float stimaTempo, float stimaCosto);
 void F_dequeue(Coda *C);
 void *F_restituisci_top_coda(Coda *C);
+void F_alloca_elemento_coda_prenotazione(CodaPrenotazione *C);
+void F_enqueue_coda_prenotazione(CodaPrenotazione *C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo);
+
 
 void STAMPACODA(Coda *Q);
 

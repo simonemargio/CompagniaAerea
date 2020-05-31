@@ -73,7 +73,7 @@ void F_utente_tratta_piu_economica(CompagniaAerea C);
 void F_utente_tratta_breve(CompagniaAerea C);
 void F_utente_meta_piu_economica(CompagniaAerea C);
 void F_utente_meta_breve(CompagniaAerea C);
-int F_calcola_punti_volo_utente(float costoTempoViaggio);
+int F_calcola_punti_volo_utente(float costoVolo);
 void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo);
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione();
