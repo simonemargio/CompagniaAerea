@@ -20,11 +20,11 @@ void F_inizializza_dijkstra(CompagniaAerea C, ListaAdj nodoSorgente, int discrim
 
     F_crea_albero_heap(C,Heap,nodoSorgente);
 
-    printf("\nAlbero Heap\n");
-    STAMPAALBEROHEAP(Heap->alberoHeapPtr);
+   // printf("\nAlbero Heap\n");
+   // STAMPAALBEROHEAP(Heap->alberoHeapPtr);
 
 
-    printf("\nNODO:|%d||%d|\n",L->numeroNodi,Heap->heapsize);
+   // printf("\nNODO:|%d||%d|\n",L->numeroNodi,Heap->heapsize);
     F_dijkstra(C,Heap,discriminanteSceltaTempoCosto);
 
     C->strutturaGestioneHeapPtr=Heap;
@@ -40,42 +40,44 @@ void F_dijkstra(CompagniaAerea C,StrutturaHeap H, int discriminanteSceltaTempoCo
 
 
         if(u){
-           // codaVerticiAdiacendi=NULL;
-            printf("\n\nEstratto nodo:|%s|-Stima:|%f|-Indice:|%d|<---------\n\n",u->nomeCitta,*u->stimaTempoOppureCostoPtr,u->indicePosizioneCittaPtr);
+
+        //    printf("\n\nEstratto nodo:|%s|-Stima:|%f|-Indice:|%d|<---------\n\n",u->nomeCitta,*u->stimaTempoOppureCostoPtr,u->indicePosizioneCittaPtr);
 
 
 
 
             ListaAdj uAdiacenti=F_ottieni_nome_citta_nodo_grafo_lista_da_indice(&L,u->indicePosizioneCittaPtr,0);
-            if(uAdiacenti!=NULL) printf("\n|%s|",uAdiacenti->nomeCittaPtr);
-            else puts("VUOTOoooo");
+
+         //   if(uAdiacenti!=NULL) printf("\n|%s|",uAdiacenti->nomeCittaPtr);
+         //   else puts("VUOTOoooo");
 
             if(uAdiacenti->arcoPtr!=NULL) {
-                puts("DIVERSO DA NULL");
+          //      puts("DIVERSO DA NULL");
                 F_crea_coda_vertici_adiacenti(&codaVerticiAdiacendi,&uAdiacenti->arcoPtr);
             }
 
 
-            printf("\nCoda veritcici adiacenti:\n");
-            STAMPACODA(&codaVerticiAdiacendi);
+         //   printf("\nCoda veritcici adiacenti:\n");
+         //   STAMPACODA(&codaVerticiAdiacendi);
 
 
            do{
                Coda verticeAdicenteU=F_restituisci_top_coda(&codaVerticiAdiacendi);
 
                if(verticeAdicenteU){
-                   printf("\nEstratto vertice adiacente:|%s| di:|%s|\n",verticeAdicenteU->elementoPtr,u->nomeCitta);
+           //        printf("\nEstratto vertice adiacente:|%s| di:|%s|\n",verticeAdicenteU->elementoPtr,u->nomeCitta);
 
                    int indiceVerticeAdiacente=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,verticeAdicenteU->elementoPtr,0);
 
-                   printf("\nPreparo relax. Partenza:|%s|-Arrivo:|%s|-Peso:|%f|-Indice:|%d|\n",u->nomeCitta,verticeAdicenteU->elementoPtr,verticeAdicenteU->pesoTempo,indiceVerticeAdiacente);
+              //     printf("\nPreparo relax. Partenza:|%s|-Arrivo:|%s|-Peso:|%f|-Indice:|%d|\n",u->nomeCitta,verticeAdicenteU->elementoPtr,verticeAdicenteU->pesoTempo,indiceVerticeAdiacente);
 
                    if(discriminanteSceltaTempoCosto==0) F_relax(H,u,u->indicePosizioneCittaPtr,indiceVerticeAdiacente,verticeAdicenteU->pesoCosto);
                    else  F_relax(H,u,u->indicePosizioneCittaPtr,indiceVerticeAdiacente,verticeAdicenteU->pesoTempo);
 
                    F_dequeue(&codaVerticiAdiacendi);
-                   if(codaVerticiAdiacendi==NULL) puts("NULLA");
-                   else puts("PIENA");
+
+              //     if(codaVerticiAdiacendi==NULL) puts("NULLA");
+              //     else puts("PIENA");
 
                } else break;
 
@@ -97,19 +99,19 @@ void F_relax(StrutturaHeap H, AlberoHeap u, int indiceU, int indiceV, float arco
     float dV=D[indiceV].stima;
     float dU=D[indiceU].stima;
 
-    printf("\nDU|%f|DV|%f|\n",dU,dV);
+  //  printf("\nDU|%f|DV|%f|\n",dU,dV);
 
     if(dU!=INFINITO){
         if(dV==INFINITO ||  (dV> (dU + arco))){
 
-            printf("\nDentro relax DV|%f|DU+Arco|%f|\n",dV,dU+arco);
+       //     printf("\nDentro relax DV|%f|DU+Arco|%f|\n",dV,dU+arco);
 
             int i=F_cerca_indice_nodo_per_decrease(H,indiceV);
             F_decrease_key_albero_heap(H,i,(dU+arco));
             Predecessore P=H->pPtr;
             P[indiceV].nodoPredecessore=u;
 
-            printf("\nMesso:|%s|-|%d|\n",u->nomeCitta,indiceV);
+       //     printf("\nMesso:|%s|-|%d|\n",u->nomeCitta,indiceV);
         }
     }
 
@@ -117,22 +119,18 @@ void F_relax(StrutturaHeap H, AlberoHeap u, int indiceU, int indiceV, float arco
 }
 
 void F_stampa_percorso(ListaAdj L,Predecessore P,int indiceCittaPartenza,int indiceCittaArrivo){
-    if(indiceCittaPartenza==indiceCittaArrivo){
-        puts("KKK");
-
-    }
-    else{
+    if(indiceCittaPartenza!=indiceCittaArrivo){
         if(P[indiceCittaArrivo].nodoPredecessore==NULL){
-            printf("\nNon esiste un percorso.\n");
+            printf("Mi dispiace ma non ci sono tratte di voli disponibili.\n");
+
         }else{
           AlberoHeap p=P[indiceCittaArrivo].nodoPredecessore;
           int indiceCitta=p->indicePosizioneCittaPtr;
 
           F_stampa_percorso(L,P,indiceCittaPartenza,indiceCitta);
-          printf("\n|%d|-|%s|\n",indiceCitta,p->nomeCitta);
+          printf("(%s)\n",p->nomeCitta);
         }
     }
-
 }
 
 void F_crea_coda_vertici_adiacenti(Coda *C, ListaAdj *L){

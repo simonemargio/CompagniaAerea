@@ -111,11 +111,11 @@ AlberoHeap F_estrai_minimo_albero_heap(StrutturaHeap H){
     if(minimoT){
          nuovoT=(struct struttura_nodo_albero_heap*)malloc(sizeof(struct struttura_nodo_albero_heap));
 
-         printf("\nEstraggo minimo. Minimo:|%s||%d|\n",minimoT->nomeCitta,minimoT->indicePosizioneCittaPtr);
+      //   printf("\nEstraggo minimo. Minimo:|%s||%d|\n",minimoT->nomeCitta,minimoT->indicePosizioneCittaPtr);
 
          nuovoT=F_copia_valori_albero_heap(minimoT,nuovoT);
 
-         printf("\nHo copiato i valori. Nuovo:|%s||%d|\n",nuovoT->nomeCitta,nuovoT->indicePosizioneCittaPtr);
+    //     printf("\nHo copiato i valori. Nuovo:|%s||%d|\n",nuovoT->nomeCitta,nuovoT->indicePosizioneCittaPtr);
 
          F_scambio_nodi_albero_heap(H,0,H->heapsize-1);
          F_elimina_foglia_albero_heap(H);
@@ -200,7 +200,7 @@ void F_crea_albero_heap(CompagniaAerea C,StrutturaHeap Heap, ListaAdj nodoSorgen
 
     D[indiceNodo].stima=0;
 
-    printf("\nINDICE NODO ALBERO HEAP:|%s||%d|\n",nodoSorgente->nomeCittaPtr,indiceNodo);
+  //  printf("\nINDICE NODO ALBERO HEAP:|%s||%d|\n",nodoSorgente->nomeCittaPtr,indiceNodo);
 
     AlberoHeap nuovoNodo=F_crea_nodo_albero_heap(Heap,indiceNodo,nodoSorgente->nomeCittaPtr);
 
@@ -327,7 +327,7 @@ AlberoHeap F_crea_nodo_albero_heap(StrutturaHeap Heap, int indiceNodo, char *nom
 
 int F_ottieni_indice_nodo_grafo_lista_da_nome_citta(ListaAdj *L,char *nomeCitta, int indiceNodoCitta){
     if(!F_struttura_vuota(*L)){
-        printf("\nCerco indice citta. Confronto Citta inviata:|%s|-Citta lista|%s|-|%d|\n",nomeCitta,(*L)->nomeCittaPtr,indiceNodoCitta);
+    //    printf("\nCerco indice citta. Confronto Citta inviata:|%s|-Citta lista|%s|-|%d|\n",nomeCitta,(*L)->nomeCittaPtr,indiceNodoCitta);
         int controlloNomeCitta=F_confronto_stringhe((*L)->nomeCittaPtr,nomeCitta);
         if(controlloNomeCitta==0) return indiceNodoCitta;
         return F_ottieni_indice_nodo_grafo_lista_da_nome_citta((&(*L)->nextPtr),nomeCitta,indiceNodoCitta+1);
@@ -337,7 +337,7 @@ int F_ottieni_indice_nodo_grafo_lista_da_nome_citta(ListaAdj *L,char *nomeCitta,
 
 ListaAdj F_ottieni_nome_citta_nodo_grafo_lista_da_indice(ListaAdj *L,int indiceCittaDaTrovare, int indiceCittaPartenza){
     if(!F_struttura_vuota(*L)){
-        printf("\nCitta|%s|-|%d|-|%d|\n",(*L)->nomeCittaPtr,indiceCittaDaTrovare,indiceCittaPartenza);
+   //     printf("\nCitta|%s|-|%d|-|%d|\n",(*L)->nomeCittaPtr,indiceCittaDaTrovare,indiceCittaPartenza);
         if(indiceCittaDaTrovare==indiceCittaPartenza) return (*L);
         return F_ottieni_nome_citta_nodo_grafo_lista_da_indice((&(*L)->nextPtr),indiceCittaDaTrovare,indiceCittaPartenza+1);
     }

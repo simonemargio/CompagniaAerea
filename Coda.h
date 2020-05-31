@@ -11,7 +11,6 @@ struct struttura_elemento_coda{
 struct struttura_elemento_coda_prenotazione{
     char *cittaPartenza;
     char *cittaArrivo;
-    int numeroScali;
     float pesoCosto;
     float pesoTempo;
     struct struttura_elemento_coda_prenotazione *nextPtr;

@@ -190,7 +190,7 @@ void F_utente_prenotazioni_attive(CompagniaAerea C){
 
 void F_stampa_utente_prenotazioni_attive(CodaPrenotazione *P){
     if(!F_struttura_vuota(*P)){
-        printf("\nPartenza:(%s)\nArrivo:(%s)\nScali:(%d)\nCosto totale:(%f)\nTempo di volo:(%f)\n\n",(*P)->cittaPartenza,(*P)->cittaArrivo,(*P)->numeroScali,(*P)->pesoCosto,(*P)->pesoTempo);
+        printf("\nPartenza:(%s)\nArrivo:(%s)\nCosto totale:(%f)\nTempo di volo:(%f)\n\n",(*P)->cittaPartenza,(*P)->cittaArrivo,(*P)->pesoCosto,(*P)->pesoTempo);
         F_stampa_utente_prenotazioni_attive((&(*P)->nextPtr));
     }
 }
@@ -358,49 +358,64 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
             int indiceCittaArrivo=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,cittaArrivo,0);
 
             if(indiceCittaArrivo!=indiceCittaPartenza){
+                float salvaCostoVolo=0 ,salvaTempoVolo=0;
+
                 F_inizializza_dijkstra(C,nodoCittaPartenza,0);
                 StrutturaHeap H=C->strutturaGestioneHeapPtr;
                 Predecessore P=H->pPtr;
+
+                printf("Il percorso fino al raggiungimento della citta' (%s):\n",nodoCittaArrivo->nomeCittaPtr);
                 F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
 
+                Distanza D=C->strutturaGestioneHeapPtr->dPtr;
+                if(D[indiceCittaArrivo].stima>0){
+                    salvaCostoVolo=D[indiceCittaArrivo].stima;
 
-                F_utente_stampa_costo_o_tempo_totale_volo(C,indiceCittaArrivo,0);
-                /* Dealloca strutture non più necessarie per Dijkstra */
+                    /* Dealloca strutture non più necessarie per Dijkstra */
+
+                    F_inizializza_dijkstra(C,nodoCittaPartenza,1);
+
+                    D=C->strutturaGestioneHeapPtr->dPtr;
+                    if(D[indiceCittaArrivo].stima>0) salvaTempoVolo=D[indiceCittaArrivo].stima;
+
+                    /* Dealloca strutture non più necessarie per Dijkstra */
+
+                    F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
+                }
+
+
+
 
             }else printf("\nLa citta' di partenza (%s) e' la stessa di arrivo (%s).\n",cittaPartenza,cittaArrivo);
-
         }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaPartenza);
     }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
 }
 
-void F_utente_stampa_costo_o_tempo_totale_volo(CompagniaAerea C, int indiceCittaArrivo, int discriminaneteCostoTempo){
-    StrutturaHeap H=C->strutturaGestioneHeapPtr;
-    Distanza D=H->dPtr;
-
-    if(D[indiceCittaArrivo].stima>0){
-        if(discriminaneteCostoTempo==0) printf("\nCosto totale del viaggio:(%f)\n",D[indiceCittaArrivo].stima);
-        else printf("\nTempo totale del viaggio:(%f)\n",D[indiceCittaArrivo].stima);
 
 
-        int puntiVolo=F_calcola_punti_volo_utente(D[indiceCittaArrivo].stima);
+void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo){
+    printf("\nPartenza:(%s)\nArrivo:(%s)\nCosto totale del viaggio:(%f)\nTempo di volo:(%f)\n",cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
+}
+
+
+
+/*
+ *    int puntiVolo=F_calcola_punti_volo_utente(D[indiceCittaArrivo].stima);
         int puntiTotaliViaggio=0;
         if(C->utenteLoggatoPtr->punti!=0) puntiTotaliViaggio=C->utenteLoggatoPtr->punti+puntiVolo;
 
-
-
-        //printf("Confermando questo volo otterrai (%f) punti da poter  ")
+        printf("Confermando questo volo otterrai (%d) punti da poter usare. In questo caso il tuo volo   ", puntiVolo);
 
 
         F_stampa_menu_accettare_o_meno_volo_utente();
         int sceltaAccettareVolo=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','1');
 
         if(sceltaAccettareVolo){
-                /* Salvare il volo nella coda dell'utente */
-        }
-
-    }
-
+                 Salvare il volo nella coda dell'utente
 }
+*
+ *
+ */
 
 int F_calcola_punti_volo_utente(float costoTempoViaggio){
     return ((30*(int)costoTempoViaggio)/100);
@@ -423,13 +438,32 @@ void F_utente_tratta_breve(CompagniaAerea C){
             int indiceCittaArrivo=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,cittaArrivo,0);
 
             if(indiceCittaArrivo!=indiceCittaPartenza){
+                float salvaTempoVolo=0, salvaCostoVolo=0;
+
                 F_inizializza_dijkstra(C,nodoCittaPartenza,1);
                 StrutturaHeap H=C->strutturaGestioneHeapPtr;
                 Predecessore P=H->pPtr;
-                F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
-                F_utente_stampa_costo_o_tempo_totale_volo(C,indiceCittaArrivo,1);
 
-                /* Dealloca strutture non più necessarie per Dijkstra */
+                printf("Il percorso fino al raggiungimento della citta' (%s):\n",nodoCittaArrivo->nomeCittaPtr);
+                F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
+
+
+                Distanza D=C->strutturaGestioneHeapPtr->dPtr;
+                if(D[indiceCittaArrivo].stima>0){
+                     salvaTempoVolo=D[indiceCittaArrivo].stima;
+
+                    /* Dealloca strutture non più necessarie per Dijkstra */
+
+                    F_inizializza_dijkstra(C,nodoCittaPartenza,0);
+
+                    D=C->strutturaGestioneHeapPtr->dPtr;
+                    if(D[indiceCittaArrivo].stima>0) salvaCostoVolo=D[indiceCittaArrivo].stima;
+
+
+                    /* Dealloca strutture non più necessarie per Dijkstra */
+
+                    F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
+                }
 
             }else printf("\nLa citta' di partenza (%s) e' la stessa di arrivo (%s).\n",cittaPartenza,cittaArrivo);
         }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaPartenza);
