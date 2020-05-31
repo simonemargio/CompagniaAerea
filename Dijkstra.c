@@ -128,7 +128,6 @@ void F_stampa_percorso(ListaAdj L,Predecessore P,int indiceCittaPartenza,int ind
           AlberoHeap p=P[indiceCittaArrivo].nodoPredecessore;
           int indiceCitta=p->indicePosizioneCittaPtr;
 
-
           F_stampa_percorso(L,P,indiceCittaPartenza,indiceCitta);
           printf("\n|%d|-|%s|\n",indiceCitta,p->nomeCitta);
         }

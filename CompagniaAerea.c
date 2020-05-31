@@ -341,17 +341,6 @@ void F_utente_partenza_e_destinazione(CompagniaAerea C){
 }
 
 
-/*
-    F_inizializza_dijkstra(C,nodoSorgente);
-    StrutturaHeap H=C->strutturaGestioneHeapPtr;
-    Predecessore P=H->pPtr;
-    F_stampa_percorso(L,P,4,14);
- */
-// Stampa tutte le citta
-// Chiedi citta partenza e arrrivo. Ritorni i NODI di queste
-// Chiadmi dijkstera con nodo sorgente
-// Stampi percorso
-
 void F_utente_tratta_piu_economica(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     F_stampa_lista_citta(C);
@@ -391,7 +380,30 @@ void F_utente_stampa_costo_o_tempo_totale_volo(CompagniaAerea C, int indiceCitta
     if(D[indiceCittaArrivo].stima>0){
         if(discriminaneteCostoTempo==0) printf("\nCosto totale del viaggio:(%f)\n",D[indiceCittaArrivo].stima);
         else printf("\nTempo totale del viaggio:(%f)\n",D[indiceCittaArrivo].stima);
+
+
+        int puntiVolo=F_calcola_punti_volo_utente(D[indiceCittaArrivo].stima);
+        int puntiTotaliViaggio=0;
+        if(C->utenteLoggatoPtr->punti!=0) puntiTotaliViaggio=C->utenteLoggatoPtr->punti+puntiVolo;
+
+
+
+        //printf("Confermando questo volo otterrai (%f) punti da poter  ")
+
+
+        F_stampa_menu_accettare_o_meno_volo_utente();
+        int sceltaAccettareVolo=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','1');
+
+        if(sceltaAccettareVolo){
+                /* Salvare il volo nella coda dell'utente */
+        }
+
     }
+
+}
+
+int F_calcola_punti_volo_utente(float costoTempoViaggio){
+    return ((30*(int)costoTempoViaggio)/100);
 }
 
 void F_utente_tratta_breve(CompagniaAerea C){
@@ -416,6 +428,7 @@ void F_utente_tratta_breve(CompagniaAerea C){
                 Predecessore P=H->pPtr;
                 F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
                 F_utente_stampa_costo_o_tempo_totale_volo(C,indiceCittaArrivo,1);
+
                 /* Dealloca strutture non più necessarie per Dijkstra */
 
             }else printf("\nLa citta' di partenza (%s) e' la stessa di arrivo (%s).\n",cittaPartenza,cittaArrivo);
@@ -427,7 +440,35 @@ void F_utente_tratta_breve(CompagniaAerea C){
 
 
 void F_utente_solo_partenza(CompagniaAerea C){
-    F_stampa_lista_citta(C);
+    int sceltaMenu=0, uscitaMenu=-1;
+
+    do{
+        F_stampa_menu_gestione_compagnia_aerea_nuova_prenotazione_menu_solo_partenza();
+        sceltaMenu=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','2');
+
+        switch(sceltaMenu){
+            default:
+                puts("Scelta non valida.\n");
+                break;
+            case 0:
+                uscitaMenu=0;
+                break;
+            case 1: /* Meta piu' economica */
+                F_utente_meta_piu_economica(C);
+                break;
+            case 2: /* Meta piu' breve */
+                F_utente_meta_breve(C);
+                break;
+        }
+    }while(uscitaMenu!=0);
+}
+
+void F_utente_meta_piu_economica(CompagniaAerea C){
+
+}
+
+void F_utente_meta_breve(CompagniaAerea C){
+
 }
 
 void F_stampa_lista_citta(CompagniaAerea C){
@@ -774,6 +815,12 @@ void F_stampa_testa_prenotazioni_attive_utente(){
     puts("\nCompagnia aerea - Le tue prenotazioni\n");
 }
 
+void F_stampa_menu_accettare_o_meno_volo_utente(){
+    puts("---------------------------------------------");
+    puts("\nCompagnia aerea - Conferma volo\n");
+    puts("1] Conferma volo\n");
+    puts("0] Annulla\n");
+}
 
 /* Funzioni di Test */
 void STAMPA_AMMINISTRATORI(AlberoAmministratore T){
