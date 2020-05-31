@@ -424,6 +424,9 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
                F_enqueue_coda_prenotazione(&C->utenteLoggatoPtr->prenotazioniAttivePtr,cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
                puts("\nVolo confermato. Puoi visualizzarlo in Prenotazioni attive.\n");
 
+               ListaAdj cittaDaIncrementareLaVisita=F_cerca_nodo_grafo_lista(&C->strutturaGrafoPtr->StrutturaGrafoPtr,cittaArrivo);
+               cittaDaIncrementareLaVisita->visite++;
+
                if(costoVoloScontato<0){
                    int puntiDaAggiungere=abs((int)costoVoloScontato);
                    C->utenteLoggatoPtr->punti=puntiDaAggiungere;
