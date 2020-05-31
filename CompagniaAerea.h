@@ -70,6 +70,8 @@ void F_utente_solo_partenza(CompagniaAerea C);
 void F_stampa_lista_citta_grafo_lista(ListaAdj *L);
 void F_stampa_lista_citta(CompagniaAerea C);
 void F_utente_tratta_piu_economica(CompagniaAerea C);
+void F_utente_tratta_breve(CompagniaAerea C);
+void F_utente_stampa_costo_o_tempo_totale_volo(CompagniaAerea C, int indiceCittaArrivo,int discriminaneteCostoTempo);
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione();
 void F_stampa_menu_gestione_compagnia_aerea_accesso_utente_registrato();

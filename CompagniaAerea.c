@@ -334,7 +334,7 @@ void F_utente_partenza_e_destinazione(CompagniaAerea C){
                 F_utente_tratta_piu_economica(C);
                 break;
             case 2: /* Tratta breve */
-                F_utente_solo_partenza(C);
+                F_utente_tratta_breve(C);
                 break;
         }
     }while(uscitaMenu!=0);
@@ -368,16 +368,61 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
         if(nodoCittaArrivo){
             int indiceCittaArrivo=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,cittaArrivo,0);
 
-            printf("\n\nINDICI P|%d|A|%d|\n",indiceCittaPartenza,indiceCittaArrivo);
+            if(indiceCittaArrivo!=indiceCittaPartenza){
+                F_inizializza_dijkstra(C,nodoCittaPartenza,0);
+                StrutturaHeap H=C->strutturaGestioneHeapPtr;
+                Predecessore P=H->pPtr;
+                F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
 
-            F_inizializza_dijkstra(C,nodoCittaPartenza);
-            StrutturaHeap H=C->strutturaGestioneHeapPtr;
-            Predecessore P=H->pPtr;
-            F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
+
+                F_utente_stampa_costo_o_tempo_totale_volo(C,indiceCittaArrivo,0);
+                /* Dealloca strutture non più necessarie per Dijkstra */
+
+            }else printf("\nLa citta' di partenza (%s) e' la stessa di arrivo (%s).\n",cittaPartenza,cittaArrivo);
 
         }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaPartenza);
     }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
 }
+
+void F_utente_stampa_costo_o_tempo_totale_volo(CompagniaAerea C, int indiceCittaArrivo, int discriminaneteCostoTempo){
+    StrutturaHeap H=C->strutturaGestioneHeapPtr;
+    Distanza D=H->dPtr;
+
+    if(D[indiceCittaArrivo].stima>0){
+        if(discriminaneteCostoTempo==0) printf("\nCosto totale del viaggio:(%f)\n",D[indiceCittaArrivo].stima);
+        else printf("\nTempo totale del viaggio:(%f)\n",D[indiceCittaArrivo].stima);
+    }
+}
+
+void F_utente_tratta_breve(CompagniaAerea C){
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+    F_stampa_lista_citta(C);
+
+    char *cittaPartenza=F_chiedi_stringa("il nome della citta' di partenza");
+    ListaAdj nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,cittaPartenza);
+
+    if(nodoCittaPartenza){
+        int indiceCittaPartenza=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,cittaPartenza,0);
+
+        char *cittaArrivo=F_chiedi_stringa("il nome della citta' di arrivo");
+        ListaAdj nodoCittaArrivo=F_cerca_nodo_grafo_lista(&L,cittaArrivo);
+
+        if(nodoCittaArrivo){
+            int indiceCittaArrivo=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,cittaArrivo,0);
+
+            if(indiceCittaArrivo!=indiceCittaPartenza){
+                F_inizializza_dijkstra(C,nodoCittaPartenza,1);
+                StrutturaHeap H=C->strutturaGestioneHeapPtr;
+                Predecessore P=H->pPtr;
+                F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
+                F_utente_stampa_costo_o_tempo_totale_volo(C,indiceCittaArrivo,1);
+                /* Dealloca strutture non più necessarie per Dijkstra */
+
+            }else printf("\nLa citta' di partenza (%s) e' la stessa di arrivo (%s).\n",cittaPartenza,cittaArrivo);
+        }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaPartenza);
+    }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
+}
+
 
 
 

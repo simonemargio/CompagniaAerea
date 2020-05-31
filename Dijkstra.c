@@ -7,7 +7,7 @@
 #include "Coda.h"
 #define INFINITO -1
 
-void F_inizializza_dijkstra(CompagniaAerea C, ListaAdj nodoSorgente){
+void F_inizializza_dijkstra(CompagniaAerea C, ListaAdj nodoSorgente, int discriminanteSceltaTempoCosto){
     Predecessore P=NULL; Distanza D=NULL; StrutturaHeap Heap=NULL; AlberoHeap H=NULL;
     Grafo L=C->strutturaGrafoPtr; int numeroNodi=L->numeroNodi;
 
@@ -25,12 +25,12 @@ void F_inizializza_dijkstra(CompagniaAerea C, ListaAdj nodoSorgente){
 
 
     printf("\nNODO:|%d||%d|\n",L->numeroNodi,Heap->heapsize);
-    F_dijkstra(C,Heap);
+    F_dijkstra(C,Heap,discriminanteSceltaTempoCosto);
 
     C->strutturaGestioneHeapPtr=Heap;
 }
 
-void F_dijkstra(CompagniaAerea C,StrutturaHeap H){
+void F_dijkstra(CompagniaAerea C,StrutturaHeap H, int discriminanteSceltaTempoCosto){
    AlberoHeap T=H->alberoHeapPtr; Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
    Coda codaVerticiAdiacendi=NULL;
 
@@ -70,7 +70,8 @@ void F_dijkstra(CompagniaAerea C,StrutturaHeap H){
 
                    printf("\nPreparo relax. Partenza:|%s|-Arrivo:|%s|-Peso:|%f|-Indice:|%d|\n",u->nomeCitta,verticeAdicenteU->elementoPtr,verticeAdicenteU->pesoTempo,indiceVerticeAdiacente);
 
-                   F_relax(H,u,u->indicePosizioneCittaPtr,indiceVerticeAdiacente,verticeAdicenteU->pesoTempo);
+                   if(discriminanteSceltaTempoCosto==0) F_relax(H,u,u->indicePosizioneCittaPtr,indiceVerticeAdiacente,verticeAdicenteU->pesoCosto);
+                   else  F_relax(H,u,u->indicePosizioneCittaPtr,indiceVerticeAdiacente,verticeAdicenteU->pesoTempo);
 
                    F_dequeue(&codaVerticiAdiacendi);
                    if(codaVerticiAdiacendi==NULL) puts("NULLA");
@@ -126,6 +127,7 @@ void F_stampa_percorso(ListaAdj L,Predecessore P,int indiceCittaPartenza,int ind
         }else{
           AlberoHeap p=P[indiceCittaArrivo].nodoPredecessore;
           int indiceCitta=p->indicePosizioneCittaPtr;
+
 
           F_stampa_percorso(L,P,indiceCittaPartenza,indiceCitta);
           printf("\n|%d|-|%s|\n",indiceCitta,p->nomeCitta);
