@@ -8,8 +8,18 @@ struct struttura_elemento_coda{
     struct struttura_elemento_coda *nextPtr;
 };
 
-typedef struct struttura_elemento_coda *Coda;
+struct struttura_elemento_coda_prenotazione{
+    char *cittaPartenza;
+    char *cittaArrivo;
+    int numeroScali;
+    float pesoCosto;
+    float pesoTempo;
+    struct struttura_elemento_coda_prenotazione *nextPtr;
+};
 
+
+typedef struct struttura_elemento_coda *Coda;
+typedef struct struttura_elemento_coda_prenotazione *CodaPrenotazione;
 
 void F_alloca_elemento_coda(Coda *C);
 void F_enqueue(Coda *C, void *elementoDaInserire, float stimaTempo, float stimaCosto);

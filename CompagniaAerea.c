@@ -6,6 +6,7 @@
 #include "Error.h"
 #include "Grafo.h"
 #include "Dijkstra.h"
+#include "Coda.h"
 
 #define LUNGHEZZA_STRINGHE 20
 
@@ -135,7 +136,7 @@ void F_login_utente_e_amministratore(CompagniaAerea C) {
 
         if (utenteTrovato) {
             int confrontoPassword = F_confronto_stringhe(password, utenteTrovato->passwordPtr);
-            if (confrontoPassword == 0) {F_stampa_informazioni_utente_registrato(utenteTrovato); F_gestione_principale_utente(C);}
+            if (confrontoPassword == 0){ C->utenteLoggatoPtr=utenteTrovato; F_gestione_principale_utente(C); }
             else printf("\nLe credenziali inserire non sono valide.\n");
 
         } else printf("\nNon e' presente nessun account con l'username (%s).\n", username);
@@ -155,6 +156,7 @@ void F_gestione_principale_utente(CompagniaAerea C){
     int sceltaMenu=0, uscitaMenu=-1;
 
     do{
+        F_stampa_informazioni_utente_registrato(C->utenteLoggatoPtr);
         F_stampa_menu_gestione_compagnia_aerea_accesso_utente_registrato();
         sceltaMenu=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','2');
 
@@ -166,6 +168,7 @@ void F_gestione_principale_utente(CompagniaAerea C){
                 uscitaMenu=0;
                 break;
             case 1: /* Prenotazioni attive */
+                F_utente_prenotazioni_attive(C);
                 break;
             case 2: /* Nuova prenotazione */
                 F_utente_nuova_prenotazione(C);
@@ -174,6 +177,22 @@ void F_gestione_principale_utente(CompagniaAerea C){
 
     }while(uscitaMenu!=0);
 
+}
+
+
+void F_utente_prenotazioni_attive(CompagniaAerea C){
+    Utente U=C->utenteLoggatoPtr; CodaPrenotazione P=U->prenotazioniAttivePtr;
+    F_stampa_testa_prenotazioni_attive_utente();
+    if(F_struttura_vuota(P)) puts("Non hai alcuna prenotazione.");
+    else F_stampa_utente_prenotazioni_attive(&P);
+
+}
+
+void F_stampa_utente_prenotazioni_attive(CodaPrenotazione *P){
+    if(!F_struttura_vuota(*P)){
+        printf("\nPartenza:(%s)\nArrivo:(%s)\nScali:(%d)\nCosto totale:(%f)\nTempo di volo:(%f)\n\n",(*P)->cittaPartenza,(*P)->cittaArrivo,(*P)->numeroScali,(*P)->pesoCosto,(*P)->pesoTempo);
+        F_stampa_utente_prenotazioni_attive((&(*P)->nextPtr));
+    }
 }
 
 void F_gestione_principale_amministratore(CompagniaAerea C){
@@ -273,8 +292,110 @@ void F_aggiungi_destinazione_amministratore(CompagniaAerea C){
 }
 
 void F_utente_nuova_prenotazione(CompagniaAerea C){
-    /* Va fatto il menu */
-    F_stampa_menu_gestione_compagnia_aerea_nuova_prenotazione();
+    int sceltaMenu=0, uscitaMenu=-1;
+
+    do{
+        F_stampa_menu_gestione_compagnia_aerea_nuova_prenotazione();
+        sceltaMenu=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','2');
+
+        switch(sceltaMenu){
+            default:
+                puts("Scelta non valida.\n");
+                break;
+            case 0:
+                uscitaMenu=0;
+                break;
+            case 1: /* Partenza e destinazione */
+                F_utente_partenza_e_destinazione(C);
+                break;
+            case 2: /* Solo partenza*/
+                F_utente_solo_partenza(C);
+                break;
+        }
+    }while(uscitaMenu!=0);
+
+}
+
+void F_utente_partenza_e_destinazione(CompagniaAerea C){
+    int sceltaMenu=0, uscitaMenu=-1;
+
+    do{
+        F_stampa_menu_gestione_compagnia_aerea_nuova_prenotazione_partenza_e_destinazione();
+        sceltaMenu=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','2');
+
+        switch(sceltaMenu){
+            default:
+                puts("Scelta non valida.\n");
+                break;
+            case 0:
+                uscitaMenu=0;
+                break;
+            case 1: /* Tratta piu' economica  */
+                F_utente_tratta_piu_economica(C);
+                break;
+            case 2: /* Tratta breve */
+                F_utente_solo_partenza(C);
+                break;
+        }
+    }while(uscitaMenu!=0);
+}
+
+
+/*
+    F_inizializza_dijkstra(C,nodoSorgente);
+    StrutturaHeap H=C->strutturaGestioneHeapPtr;
+    Predecessore P=H->pPtr;
+    F_stampa_percorso(L,P,4,14);
+ */
+// Stampa tutte le citta
+// Chiedi citta partenza e arrrivo. Ritorni i NODI di queste
+// Chiadmi dijkstera con nodo sorgente
+// Stampi percorso
+
+void F_utente_tratta_piu_economica(CompagniaAerea C){
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+    F_stampa_lista_citta(C);
+
+    char *cittaPartenza=F_chiedi_stringa("il nome della citta' di partenza");
+    ListaAdj nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,cittaPartenza);
+
+    if(nodoCittaPartenza){
+        int indiceCittaPartenza=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,cittaPartenza,0);
+
+        char *cittaArrivo=F_chiedi_stringa("il nome della citta' di arrivo");
+        ListaAdj nodoCittaArrivo=F_cerca_nodo_grafo_lista(&L,cittaArrivo);
+
+        if(nodoCittaArrivo){
+            int indiceCittaArrivo=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,cittaArrivo,0);
+
+            printf("\n\nINDICI P|%d|A|%d|\n",indiceCittaPartenza,indiceCittaArrivo);
+
+            F_inizializza_dijkstra(C,nodoCittaPartenza);
+            StrutturaHeap H=C->strutturaGestioneHeapPtr;
+            Predecessore P=H->pPtr;
+            F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
+
+        }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaPartenza);
+    }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
+}
+
+
+
+void F_utente_solo_partenza(CompagniaAerea C){
+    F_stampa_lista_citta(C);
+}
+
+void F_stampa_lista_citta(CompagniaAerea C){
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+    printf("Lista delle citta' presenti:\n");
+    F_stampa_lista_citta_grafo_lista(&L);
+}
+
+void F_stampa_lista_citta_grafo_lista(ListaAdj *L){
+    if(!F_struttura_vuota(*L)){
+        printf("(%s)\n",(*L)->nomeCittaPtr);
+        F_stampa_lista_citta_grafo_lista((&(*L)->nextPtr));
+    }
 }
 
 
@@ -408,9 +529,11 @@ void F_alloca_struttura_utente(Utente *nuovoUtente){
     (*nuovoUtente)->email=NULL;
     (*nuovoUtente)->usernamePtr=NULL;
     (*nuovoUtente)->passwordPtr=NULL;
+    (*nuovoUtente)->prenotazioniAttivePtr=NULL;
     (*nuovoUtente)->nomePtr=NULL;
     (*nuovoUtente)->cognomePtr=NULL;
     (*nuovoUtente)->punti=0;
+
 }
 
 void F_inserisci_informazioni_utente(Utente *nuovoUtente, char *nickname, char *email, char *password, char *nome, char *cognome){
@@ -428,6 +551,7 @@ void F_alloca_struttura_compagnia_aerea(CompagniaAerea *C){
     (*C)->strutturaAmministratoriPtr=NULL;
     (*C)->strutturaGrafoPtr=NULL;
     (*C)->strutturaGestioneHeapPtr=NULL;
+    (*C)->utenteLoggatoPtr=NULL;
 }
 
 
@@ -599,6 +723,12 @@ void F_stampa_testa_compagnia_aerea_registrazione(){
     puts("---------------------------------------------");
     puts("\nCompagnia aerea - Registrazione utente\n");
 }
+
+void F_stampa_testa_prenotazioni_attive_utente(){
+    puts("---------------------------------------------");
+    puts("\nCompagnia aerea - Le tue prenotazioni\n");
+}
+
 
 /* Funzioni di Test */
 void STAMPA_AMMINISTRATORI(AlberoAmministratore T){

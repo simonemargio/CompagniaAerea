@@ -1,12 +1,15 @@
 #ifndef COMPAGNIAAEREA_COMPAGNIAAEREA_H
 #define COMPAGNIAAEREA_COMPAGNIAAEREA_H
 
+#include "Coda.h"
+#include "Grafo.h"
 
 struct struttura_gestione_compagnia_aerea{
     struct struttura_nodo_albero_utente *strutturaUtentiPtr;
     struct struttura_nodo_albero_amministratore *strutturaAmministratoriPtr;
     struct struttura_gestione_grafi *strutturaGrafoPtr;
     struct struttura_gestione_albero_heap *strutturaGestioneHeapPtr;
+    struct struttua_gestione_utente *utenteLoggatoPtr;
 };
 
 
@@ -17,6 +20,7 @@ struct struttua_gestione_utente{
     char *email;
     char *passwordPtr;
     int punti;
+    struct struttura_elemento_coda_prenotazione *prenotazioniAttivePtr;
 };
 
 struct struttura_gestione_amministratore{
@@ -59,7 +63,13 @@ void F_alloca_struttura_utente(Utente *nuovoUtente);
 void F_inserisci_informazioni_utente(Utente *nuovoUtente, char *nickname, char *email, char *password, char *nome, char *cognome);
 void F_stampa_testa_compagnia_aerea_registrazione();
 void F_stampa_informazioni_utente_registrato(Utente utenteRegistrato);
-
+void F_utente_prenotazioni_attive(CompagniaAerea C);
+void F_stampa_utente_prenotazioni_attive(CodaPrenotazione *P);
+void F_utente_partenza_e_destinazione(CompagniaAerea C);
+void F_utente_solo_partenza(CompagniaAerea C);
+void F_stampa_lista_citta_grafo_lista(ListaAdj *L);
+void F_stampa_lista_citta(CompagniaAerea C);
+void F_utente_tratta_piu_economica(CompagniaAerea C);
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione();
 void F_stampa_menu_gestione_compagnia_aerea_accesso_utente_registrato();
@@ -67,6 +77,7 @@ void F_stampa_menu_gestione_compagnia_aerea_nuova_prenotazione();
 void F_stampa_menu_gestione_compagnia_aerea_nuova_prenotazione_partenza_e_destinazione();
 void F_stampa_menu_gestione_compagnia_aerea_nuova_prenotazione_menu_solo_partenza();
 void F_stampa_menu_gestione_compagnia_aerea_amministratore();
+void F_stampa_testa_prenotazioni_attive_utente();
 
 
 
