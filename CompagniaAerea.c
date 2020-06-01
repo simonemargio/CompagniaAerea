@@ -531,20 +531,67 @@ void F_utente_solo_partenza(CompagniaAerea C){
             case 1: /* Meta piu' economica */
                 F_utente_meta_piu_economica(C);
                 break;
-            case 2: /* Meta piu' breve */
-                F_utente_meta_breve(C);
+            case 2: /* Meta più gettonata */
+                F_utente_meta_piu_gettonata(C);
                 break;
         }
     }while(uscitaMenu!=0);
 }
 
 void F_utente_meta_piu_economica(CompagniaAerea C){
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+    F_stampa_lista_citta(C);
+
+    char *cittaPartenza=F_chiedi_stringa("il nome della citta' di partenza cui trovare la meta piu' economica");
+    ListaAdj nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,cittaPartenza);
+
+    if(nodoCittaPartenza) {
+        Coda codaverticiAdiacenti=NULL;
+        F_crea_coda_vertici_adiacenti(&codaverticiAdiacenti,&nodoCittaPartenza->arcoPtr);
+
+        if(codaverticiAdiacenti){
+            float valoreCostoVoloBasso=0; char *nomeCittaPiuEconomica=NULL;
+
+            while (codaverticiAdiacenti){
+                if(valoreCostoVoloBasso==0 || valoreCostoVoloBasso > codaverticiAdiacenti->pesoCosto){
+                    valoreCostoVoloBasso=codaverticiAdiacenti->pesoCosto;
+                    nomeCittaPiuEconomica=codaverticiAdiacenti->elementoPtr;
+                }
+                codaverticiAdiacenti=codaverticiAdiacenti->nextPtr;
+            }
+
+            if(nomeCittaPiuEconomica) printf("\nLa meta piu' economica da (%s) e' la citta' (%s) con un costo di volo pari a (%f).\n",nodoCittaPartenza->nomeCittaPtr,nomeCittaPiuEconomica,valoreCostoVoloBasso);
+
+        }else printf("\nLa citta' di partenza (%s) non ha alcun volo.\n",cittaPartenza);
+    }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
 
 }
 
-void F_utente_meta_breve(CompagniaAerea C){
+void F_utente_meta_piu_gettonata(CompagniaAerea C){
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
 
+    ListaAdj cittaGettonata=F_ottieni_citta_piu_gettonata(&L);
+
+    if(cittaGettonata) printf("\nLa citta' piu' gettonata e' (%s).\n",cittaGettonata->nomeCittaPtr);
+    else printf("\nAl momento non e' presente nessuna citta' \"gettonata\".\n");
 }
+
+ListaAdj F_ottieni_citta_piu_gettonata(ListaAdj *L){
+    int valoreVisitaCittaMassimo=0; ListaAdj cittaDaRitornare=NULL;
+
+    while((*L)){
+
+        if(valoreVisitaCittaMassimo<(*L)->visite) {
+            cittaDaRitornare=(*L);
+            valoreVisitaCittaMassimo=(*L)->visite;
+        }
+
+        (*L)=(*L)->nextPtr;
+    }
+
+    return cittaDaRitornare;
+}
+
 
 void F_stampa_lista_citta(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
