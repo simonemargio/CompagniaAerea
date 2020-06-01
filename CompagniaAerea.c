@@ -394,7 +394,7 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
 
 
 void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo){
-    int puntiTotaliViaggio=0, sceltaMenu=0, uscitaMenu=-1; float costoVoloScontato=0;
+    int puntiTotaliViaggio=0, sceltaMenu=0, uscitaMenu=-1; float costoVoloScontato=0; ListaAdj cittaDaIncrementareLaVisita=NULL;
 
     printf("\nPartenza:(%s)\nArrivo:(%s)\nCosto totale del viaggio:(%f)\nTempo di volo:(%f)\n",cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
 
@@ -404,14 +404,13 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
 
     costoVoloScontato=costoVolo-(float)puntiTotaliViaggio;
 
-    printf("\nPunti volo:|%d|- Punti totali viaggio:|%d| - Costo volo scontato:|%f| - Volo intero|%d|",puntiVolo,puntiTotaliViaggio,costoVoloScontato,(int)costoVolo);
 
     if(costoVoloScontato>0) printf("Confermando questo volo otterrai (%d) punti da poter usare. In base ai punti precedendi il costo del volo sara':(%f)\n",puntiVolo,costoVoloScontato);
     else printf("Confermando questo volo otterrai (%d) punti da poter usare e viaggiare completamente gratis lungo la tratta scelta.\n",puntiVolo);
 
    do{
        F_stampa_menu_accettare_o_meno_volo_utente();
-       sceltaMenu=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','1');
+       sceltaMenu=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','2');
 
        switch(sceltaMenu){
            default:
@@ -424,14 +423,23 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
                F_enqueue_coda_prenotazione(&C->utenteLoggatoPtr->prenotazioniAttivePtr,cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
                puts("\nVolo confermato. Puoi visualizzarlo in Prenotazioni attive.\n");
 
-               ListaAdj cittaDaIncrementareLaVisita=F_cerca_nodo_grafo_lista(&C->strutturaGrafoPtr->StrutturaGrafoPtr,cittaArrivo);
+               cittaDaIncrementareLaVisita=F_cerca_nodo_grafo_lista(&C->strutturaGrafoPtr->StrutturaGrafoPtr,cittaArrivo);
                cittaDaIncrementareLaVisita->visite++;
 
                if(costoVoloScontato<0){
                    int puntiDaAggiungere=abs((int)costoVoloScontato);
                    C->utenteLoggatoPtr->punti=puntiDaAggiungere;
                }
+               uscitaMenu=0;
+               break;
+           case 2:
+               C->utenteLoggatoPtr->punti=C->utenteLoggatoPtr->punti+puntiVolo;
 
+               F_enqueue_coda_prenotazione(&C->utenteLoggatoPtr->prenotazioniAttivePtr,cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
+               puts("\nVolo confermato. Puoi visualizzarlo in Prenotazioni attive.\n");
+
+               cittaDaIncrementareLaVisita=F_cerca_nodo_grafo_lista(&C->strutturaGrafoPtr->StrutturaGrafoPtr,cittaArrivo);
+               cittaDaIncrementareLaVisita->visite++;
                uscitaMenu=0;
                break;
        }
@@ -677,7 +685,7 @@ void F_alloca_struttura_utente(Utente *nuovoUtente){
     (*nuovoUtente)->prenotazioniAttivePtr=NULL;
     (*nuovoUtente)->nomePtr=NULL;
     (*nuovoUtente)->cognomePtr=NULL;
-    (*nuovoUtente)->punti=9999; /* RIMETTERE A ZERO */
+    (*nuovoUtente)->punti=0;
 
 }
 
@@ -877,7 +885,8 @@ void F_stampa_testa_prenotazioni_attive_utente(){
 void F_stampa_menu_accettare_o_meno_volo_utente(){
     puts("---------------------------------------------");
     puts("\nCompagnia aerea - Conferma volo\n");
-    puts("1] Conferma volo\n");
+    puts("1] Conferma volo usando i punti viaggio\n");
+    puts("2] Conferma volo pagando il prezzo pieno\n");
     puts("0] Annulla\n");
 }
 
