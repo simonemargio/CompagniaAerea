@@ -75,6 +75,10 @@ void F_utente_meta_piu_economica(CompagniaAerea C);
 void F_utente_meta_breve(CompagniaAerea C);
 int F_calcola_punti_volo_utente(float costoVolo);
 void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo);
+float F_chiedi_float(char *s, int dim);
+void F_stampa_lista_citta_amministratore(CompagniaAerea C);
+void F_stampa_lista_citta_grafo_lista_amministratore(ListaAdj *L);
+void F_stampa_lista_citta_arco_grafo_lista_amministratore(ListaAdj *L);
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione();
 void F_stampa_menu_gestione_compagnia_aerea_accesso_utente_registrato();

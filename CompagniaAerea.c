@@ -200,7 +200,7 @@ void F_gestione_principale_amministratore(CompagniaAerea C){
 
     do{
         F_stampa_menu_gestione_compagnia_aerea_amministratore();
-        sceltaMenu=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','4');
+        sceltaMenu=F_chiedi_intero("Inserisci il numero dell'operazione da effetturare:",1,'0','5');
 
         switch(sceltaMenu){
             default:
@@ -220,6 +220,9 @@ void F_gestione_principale_amministratore(CompagniaAerea C){
                 break;
             case 4: /* Elimina volo */
                 F_elimina_volo_amministratore(C);
+                break;
+            case 5: /* Stampa lista citta */
+                F_stampa_lista_citta_amministratore(C);
                 break;
         }
 
@@ -270,9 +273,14 @@ void F_aggiungi_volo_amministratore(CompagniaAerea C){
         ListaAdj nodoArrivo=F_cerca_nodo_grafo_lista(&L,cittaArrivo);
 
         if(nodoArrivo){
-            /* Aggiungere la richiesta dei pesi del tempo e del costo */
-            F_aggiungi_arco_grafo_lista(&G,cittaPartenza,cittaArrivo,0,0);
-            printf("Il volo da (%s) a (%s) e' stato creato. Il tempo di volo e' (%f) con costo (%f).\n",cittaPartenza,cittaArrivo,0.1,0.1);
+
+            float costoVolo=F_chiedi_float("Inserisci il costo del volo (es: 34.100)",5);
+            float tempoVolo=F_chiedi_float("Inserisci il tempo di volo (es: 2.3400)",5);
+
+            if(costoVolo>0 && tempoVolo>0){
+                F_aggiungi_arco_grafo_lista(&G,cittaPartenza,cittaArrivo,tempoVolo,costoVolo);
+                printf("Se il volo non e' gia' presente si confermano i seguenti dati: volo da (%s) a (%s) con tempo di volo (%f) e costo (%f).\n",cittaPartenza,cittaArrivo,tempoVolo,costoVolo);
+            }else  printf("\nI valori devono essere positivi.\n");
 
         }else printf("\nLa citta' di arrivo (%s) non esiste. Si prega eventuamente di aggiungerla.\n",cittaArrivo);
     }else printf("\nLa citta' di partenza (%s) non esiste. Si prega eventuamente di aggiungerla.\n",cittaPartenza);
@@ -551,6 +559,27 @@ void F_stampa_lista_citta_grafo_lista(ListaAdj *L){
     }
 }
 
+void F_stampa_lista_citta_amministratore(CompagniaAerea C){
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+    printf("Lista delle citta' presenti:\n");
+    F_stampa_lista_citta_grafo_lista_amministratore(&L);
+}
+
+void F_stampa_lista_citta_grafo_lista_amministratore(ListaAdj *L){
+    if(!F_struttura_vuota(*L)){
+        printf("(%s)",(*L)->nomeCittaPtr);
+        if((*L)->arcoPtr) F_stampa_lista_citta_arco_grafo_lista_amministratore((&(*L)->arcoPtr));
+        puts("");
+        F_stampa_lista_citta_grafo_lista_amministratore((&(*L)->nextPtr));
+    }
+}
+
+void F_stampa_lista_citta_arco_grafo_lista_amministratore(ListaAdj *L){
+    if(!F_struttura_vuota(*L)){
+        printf("->(%s)(Tempo volo:%f)(Costo volo:%f)",(*L)->nomeCittaPtr,(*L)->pesoTempoPtr->peso,(*L)->pesoCostoPtr->peso);
+        F_stampa_lista_citta_arco_grafo_lista_amministratore((&(*L)->arcoPtr));
+    }
+}
 
 void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr;
@@ -810,6 +839,36 @@ char *F_chiedi_stringa(char *s){
     return stringa_uscita;
 }
 
+float F_chiedi_float(char *s, int dim){
+    char tmp[dim],c='*';
+    int i=0;
+    float ftemp;
+
+    printf("\n%s (Max:%d):",s,dim-1);
+
+    while( (c= (char) getchar()) != '\n' && i<dim && c != EOF )
+    {
+        if(c>='0' && c<='9'){
+            tmp[i]=c;
+            i++;
+        }
+
+        if(c=='.' || c==','){
+            tmp[i]='.';
+            i++;
+        }
+
+
+    }
+
+
+    ftemp=strtof(tmp,NULL);
+    float *elemento=malloc(sizeof(float));
+    memcpy(elemento,&ftemp,sizeof(float));
+
+    return *elemento;
+}
+
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione(){
     puts("---------------------------------------------");
     puts("\nCompagnia aerea - Login e registrazione\n");
@@ -863,6 +922,7 @@ void F_stampa_menu_gestione_compagnia_aerea_amministratore(){
     puts("2] Aggiungi volo");
     puts("3] Elimina destinazione");
     puts("4] Elimina volo");
+    puts("5] Stampa lista citta");
     puts("\n0] Log out");
     puts("---------------------------------------------");
 }
