@@ -56,7 +56,6 @@ void F_engine_compagnia_aerea(CompagniaAerea C){
                 break;
             case 0:
                 uscitaMenu=0;
-                /* Dealloca strutture */
                 break;
             case 1:  /* Login */
                 F_login_utente_e_amministratore(C);
@@ -363,7 +362,7 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
                 StrutturaHeap H=C->strutturaGestioneHeapPtr;
                 Predecessore P=H->pPtr;
 
-                printf("Il percorso fino al raggiungimento della citta' (%s):\n",nodoCittaArrivo->nomeCittaPtr);
+                printf("Il percorso (con eventuali scali) fino al raggiungimento della citta' (%s):\n",nodoCittaArrivo->nomeCittaPtr);
                 F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
 
                 Distanza D=C->strutturaGestioneHeapPtr->dPtr;
@@ -472,7 +471,7 @@ void F_utente_tratta_breve(CompagniaAerea C){
                 StrutturaHeap H=C->strutturaGestioneHeapPtr;
                 Predecessore P=H->pPtr;
 
-                printf("Il percorso fino al raggiungimento della citta' (%s):\n",nodoCittaArrivo->nomeCittaPtr);
+                printf("Il percorso (con eventuali scali) fino al raggiungimento della citta' (%s):\n",nodoCittaArrivo->nomeCittaPtr);
                 F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
 
 
