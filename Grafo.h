@@ -34,6 +34,7 @@ void F_alloca_strutture_peso_tempo_e_costo(ListaAdj *L, float tempo, float costo
 void F_dealloca_archi_grafo_lista(ListaAdj *L);
 void F_dealloca_nodo_grafo_lista(ListaAdj *L, char *cittaDaEliminare);
 void F_dealloca_arco_grafo_lista(ListaAdj *L, char *cittaDaEliminare);
+void F_dealloca_struttura_grafo_lista(ListaAdj *L);
 
 /* Funzione di Test */
 void  STAMPA_GRAFO_CITTA(ListaAdj *L);

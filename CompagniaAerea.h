@@ -80,6 +80,7 @@ void F_stampa_lista_citta_amministratore(CompagniaAerea C);
 void F_stampa_lista_citta_grafo_lista_amministratore(ListaAdj *L);
 void F_stampa_lista_citta_arco_grafo_lista_amministratore(ListaAdj *L);
 ListaAdj F_ottieni_citta_piu_gettonata(ListaAdj *L);
+void F_dealloca_strutture(CompagniaAerea C);
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione();
 void F_stampa_menu_gestione_compagnia_aerea_accesso_utente_registrato();

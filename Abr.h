@@ -27,6 +27,9 @@ Amministratore F_cerca_amministratore_abr(AlberoAmministratore *T, char *amminis
 Utente F_cerca_utente_abr(AlberoUtente *T, char *utenteDaCercare);
 void F_alloca_struttura_utente_abr(AlberoUtente *nuovoUtente);
 void F_inserisci_utente_abr(AlberoUtente *T, Utente utenteDaInserire);
+void F_dealloca_struttura_albero_amministratore(AlberoAmministratore *T);
+void F_dealloca_struttura_albero_utente(AlberoUtente *T);
+
 
 /* Funzioni di Test */
 void STAMPA_AMMINISTRATORI(AlberoAmministratore T);

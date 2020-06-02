@@ -104,6 +104,14 @@ void F_dealloca_arco_grafo_lista(ListaAdj *L, char *cittaDaEliminare){
     }
 }
 
+void F_dealloca_struttura_grafo_lista(ListaAdj *L){
+    if(!F_struttura_vuota(*L)){
+        F_dealloca_struttura_grafo_lista((&(*L)->nextPtr));
+        if((*L)->arcoPtr) F_dealloca_archi_grafo_lista(&(*L)->arcoPtr);
+        free(*L);
+    }
+}
+
 
 /* Funzione di Test */
 void  STAMPA_GRAFO_CITTA(ListaAdj *L){

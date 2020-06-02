@@ -18,6 +18,7 @@ void F_gestione_compagnia_aerea(){
     F_popolamento_amministratori(C);
     F_popoplamento_grafo_mappa_voli(C);
     F_engine_compagnia_aerea(C);
+    F_dealloca_strutture(C);
 
 
 
@@ -914,6 +915,17 @@ float F_chiedi_float(char *s, int dim){
     memcpy(elemento,&ftemp,sizeof(float));
 
     return *elemento;
+}
+
+
+void F_dealloca_strutture(CompagniaAerea C){
+    AlberoUtente alberoUtente=C->strutturaUtentiPtr;
+    AlberoAmministratore alberoAmministratore=C->strutturaAmministratoriPtr;
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+
+    if(!F_struttura_vuota(alberoUtente)) F_dealloca_struttura_albero_utente(&alberoUtente);
+    if(!F_struttura_vuota(alberoAmministratore)) F_dealloca_struttura_albero_amministratore(&alberoAmministratore);
+    if(!F_struttura_vuota(L))  F_dealloca_struttura_grafo_lista(&L);
 }
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione(){

@@ -76,3 +76,23 @@ Utente F_cerca_utente_abr(AlberoUtente *T, char *utenteDaCercare){
         }
     }
 }
+
+void F_dealloca_struttura_albero_amministratore(AlberoAmministratore *T){
+    if(!F_struttura_vuota(*T)){
+        F_dealloca_struttura_albero_amministratore((&(*T)->sxPtr));
+        F_dealloca_struttura_albero_amministratore((&(*T)->dxPtr));
+        Amministratore amministratore=(*T)->nodoAmministratorePtr;
+        free(amministratore);
+        free(*T);
+    }
+}
+
+void F_dealloca_struttura_albero_utente(AlberoUtente *T){
+    if(!F_struttura_vuota(*T)){
+        F_dealloca_struttura_albero_utente((&(*T)->sxPtr));
+        F_dealloca_struttura_albero_utente((&(*T)->dxPtr));
+        Utente utente=(*T)->nodoUtentePtr;
+        free(utente);
+        free(*T);
+    }
+}
