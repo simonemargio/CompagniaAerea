@@ -361,3 +361,20 @@ void F_alloca_nodo_albero_heap(AlberoHeap *T, char *nomeCittaDaInserire, int ind
     (*T)->stimaTempoOppureCostoPtr=stimaCitta;
 }
 
+
+void F_dealloca_struttura_array_predecessori(Predecessore *P, int numeroTotaleElementi){
+    if(!F_struttura_vuota(*P)){
+        int indiceElementoDaEliminare=0;
+
+        for(;indiceElementoDaEliminare<numeroTotaleElementi;indiceElementoDaEliminare++)
+            (*P)[indiceElementoDaEliminare].nodoPredecessore=NULL;
+
+        free(*P);
+    }
+}
+
+void F_dealloca_struttura_array_distanze(Distanza *D){
+    if(!F_struttura_vuota(*D)){
+        free(*D);
+    }
+}

@@ -32,16 +32,6 @@ void F_gestione_compagnia_aerea(){
     Predecessore P=H->pPtr;
     F_stampa_percorso(L,P,4,14);*/
 
-
-
-
-
-
-    /* Deallocare le strutture */
-
-
-
-
     /* Funzioni di Test */
   /*  Grafo G=C->strutturaGrafoPtr;
     puts("\nCitta presenti:");
@@ -380,14 +370,10 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
                 if(D[indiceCittaArrivo].stima>0){
                     salvaCostoVolo=D[indiceCittaArrivo].stima;
 
-                    /* Dealloca strutture non più necessarie per Dijkstra */
-
                     F_inizializza_dijkstra(C,nodoCittaPartenza,1);
 
                     D=C->strutturaGestioneHeapPtr->dPtr;
                     if(D[indiceCittaArrivo].stima>0) salvaTempoVolo=D[indiceCittaArrivo].stima;
-
-                    /* Dealloca strutture non più necessarie per Dijkstra */
 
                     F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
                 }
@@ -494,15 +480,10 @@ void F_utente_tratta_breve(CompagniaAerea C){
                 if(D[indiceCittaArrivo].stima>0){
                      salvaTempoVolo=D[indiceCittaArrivo].stima;
 
-                    /* Dealloca strutture non più necessarie per Dijkstra */
-
                     F_inizializza_dijkstra(C,nodoCittaPartenza,0);
 
                     D=C->strutturaGestioneHeapPtr->dPtr;
                     if(D[indiceCittaArrivo].stima>0) salvaCostoVolo=D[indiceCittaArrivo].stima;
-
-
-                    /* Dealloca strutture non più necessarie per Dijkstra */
 
                     F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
                 }
@@ -799,7 +780,6 @@ int F_struttura_vuota(void *S){
 
 int F_confronto_stringhe(char *s1, char *s2){
     return strcasecmp(s1,s2);
-   // return strcmp(s1,s2);
 }
 
 
@@ -922,10 +902,20 @@ void F_dealloca_strutture(CompagniaAerea C){
     AlberoUtente alberoUtente=C->strutturaUtentiPtr;
     AlberoAmministratore alberoAmministratore=C->strutturaAmministratoriPtr;
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+    StrutturaHeap Heap=C->strutturaGestioneHeapPtr;
+
+    if(Heap){
+        Distanza D=Heap->dPtr;
+        Predecessore P=Heap->pPtr;
+        F_dealloca_struttura_array_predecessori(&P,G->numeroNodi);
+        F_dealloca_struttura_array_distanze(&D);
+        free(Heap);
+    }
 
     if(!F_struttura_vuota(alberoUtente)) F_dealloca_struttura_albero_utente(&alberoUtente);
     if(!F_struttura_vuota(alberoAmministratore)) F_dealloca_struttura_albero_amministratore(&alberoAmministratore);
     if(!F_struttura_vuota(L))  F_dealloca_struttura_grafo_lista(&L);
+    free(C);
 }
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione(){

@@ -53,6 +53,8 @@ AlberoHeap F_copia_valori_albero_heap(AlberoHeap minT, AlberoHeap newT);
 void F_elimina_foglia_albero_heap(StrutturaHeap H);
 void F_decrease_key_albero_heap(StrutturaHeap H,int i, float val);
 ListaAdj F_ottieni_nome_citta_nodo_grafo_lista_da_indice(ListaAdj *L,int indiceCittaDaTrovare, int indiceCittaDiPartenza);
+void F_dealloca_struttura_array_predecessori(Predecessore *P, int numeroTotaleElementi);
+void F_dealloca_struttura_array_distanze(Distanza *D);
 
 void STAMPAALBEROHEAP(AlberoHeap H);
 

@@ -92,6 +92,7 @@ void F_dealloca_struttura_albero_utente(AlberoUtente *T){
         F_dealloca_struttura_albero_utente((&(*T)->sxPtr));
         F_dealloca_struttura_albero_utente((&(*T)->dxPtr));
         Utente utente=(*T)->nodoUtentePtr;
+        if(utente->prenotazioniAttivePtr) F_dealloca_struttura_coda_prenotazione(&utente->prenotazioniAttivePtr);
         free(utente);
         free(*T);
     }

@@ -69,3 +69,34 @@ void F_enqueue_coda_prenotazione(CodaPrenotazione *C, char *cittaPartenza, char 
         F_enqueue_coda_prenotazione((&(*C)->nextPtr),cittaPartenza, cittaArrivo,costoVolo,tempoVolo);
     }
 }
+
+void F_dealloca_struttura_coda(Coda *C){
+    if(!F_struttura_vuota(*C)){
+        F_dealloca_struttura_coda((&(*C)->nextPtr));
+        F_elimina_elemento_coda_in_testa((&(*C)));
+    }
+}
+
+void F_elimina_elemento_coda_in_testa(Coda *C){
+    if(!F_struttura_vuota(*C)){
+        Coda elementoDaEliminare = *C;
+        *C = elementoDaEliminare->nextPtr;
+        free(elementoDaEliminare);
+    }
+}
+
+void F_dealloca_struttura_coda_prenotazione(CodaPrenotazione *C){
+    if(!F_struttura_vuota(*C)){
+        F_dealloca_struttura_coda_prenotazione((&(*C)->nextPtr));
+        F_elimina_elemento_coda_prenotazione_in_testa((&(*C)));
+    }
+}
+
+void F_elimina_elemento_coda_prenotazione_in_testa(CodaPrenotazione *C){
+    if(!F_struttura_vuota(*C)){
+        CodaPrenotazione elementoDaEliminare = *C;
+        *C = elementoDaEliminare->nextPtr;
+        free(elementoDaEliminare);
+    }
+}
+
