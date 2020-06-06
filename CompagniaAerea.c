@@ -528,11 +528,13 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
      * Viene richiesto all'utente l'inserimento della città di partenza
      * e di arrivo le quali vengono verificate all'interno del grafo.
      *
-     * Viene ricavato l'indice numerico associato alla città scelta (maggiori
-     * informazioni nella libreria Dijkstra.c) e il nodo delle città.
+     * Viene ricavato l'indice numerico associato alle città scelte (maggiori
+     * informazioni nella libreria Dijkstra.c) e il nodi delle città nel grafo.
      *
      * Verificata la correttezza delle informazioni si procede a ricercare il percorso
      * più economico.
+     * Se questo esiste allora nell'array delle distanze "D" è presente la stima del percorso
+     * più breve in termini di costo dal nodo di partenza a quello di arrivo.
      *
      */
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
@@ -552,7 +554,14 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
 
             if(indiceCittaArrivo!=indiceCittaPartenza){
                 float salvaCostoVolo=0 ,salvaTempoVolo=0;
-
+                /*
+                 * Dijkstra prende in ingresso oltre alla struttura principale della compagnia
+                 * aerea e il nodo sorgente anche un valore numerico che può essere 0 o 1.
+                 * Questo valore è un discriminante per indicare se l'algoritmo di Dijkstra deve
+                 * procedere a calcolare il percorso minimo in base al costo (0) oppure in base
+                 * al tempo (1).
+                 *
+                 */
                 F_inizializza_dijkstra(C,nodoCittaPartenza,0);
                 StrutturaHeap H=C->strutturaGestioneHeapPtr;
                 Predecessore P=H->pPtr;
@@ -563,20 +572,28 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
                 Distanza D=C->strutturaGestioneHeapPtr->dPtr;
                 if(D[indiceCittaArrivo].stima>0){
                     salvaCostoVolo=D[indiceCittaArrivo].stima;
-
+                    /*
+                     * Il costo del volo è il MIGLIORE possibile ma il tempo di volo dipende soltanto
+                     * dal percorso che si è fatto (qui Dijkstra lavora sul costo non sul tempo).
+                     * Per avere il tempo totale di volo, durante la stampa del percorso vengono salvate in
+                     * una coda tutte le città del percorso. F_ottieni_tempo_volo_complessivo ripercorre tali
+                     * città andando a sommare tutti i tempi di volo da una città all'altra.
+                     *
+                     */
                     Coda coda=H->codaCostoTempoEffettivoPtr;
                     salvaTempoVolo=F_ottieni_tempo_volo_complessivo(C,&coda,nodoCittaArrivo->nomeCittaPtr);
                     H->codaCostoTempoEffettivoPtr=NULL;
 
-
+                    /*
+                     * Si mostrano all'utente le informazioni ottenute e viene data la possibilità
+                     * di accettare o meno il volo.
+                     *
+                     */
                     F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
                 }
 
-
-
-
             }else printf("\nLa citta' di partenza (%s) e' la stessa di arrivo (%s).\n",cittaPartenza,cittaArrivo);
-        }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaPartenza);
+        }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaArrivo);
     }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
 }
 
@@ -658,6 +675,19 @@ int F_calcola_punti_volo_utente(float costoVolo){
 }
 
 void F_utente_tratta_breve(CompagniaAerea C){
+    /*
+     * Viene richiesto all'utente l'inserimento della città di partenza
+     * e di arrivo le quali vengono verificate all'interno del grafo.
+     *
+     * Viene ricavato l'indice numerico associato alle città scelte (maggiori
+     * informazioni nella libreria Dijkstra.c) e il nodi delle città nel grafo.
+     *
+     * Verificata la correttezza delle informazioni si procede a ricercare il percorso
+     * più breve.
+     * Se questo esiste allora nell'array delle distanze "D" è presente la stima del percorso
+     * più breve in termini di tempo dal nodo di partenza a quello di arrivo.
+     *
+     */
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     F_stampa_lista_citta(C);
 
@@ -675,7 +705,14 @@ void F_utente_tratta_breve(CompagniaAerea C){
 
             if(indiceCittaArrivo!=indiceCittaPartenza){
                 float salvaTempoVolo=0, salvaCostoVolo=0;
-
+                /*
+                 * Dijkstra prende in ingresso oltre alla struttura principale della compagnia
+                 * aerea e il nodo sorgente anche un valore numerico che può essere 0 o 1.
+                 * Questo valore è un discriminante per indicare se l'algoritmo di Dijkstra deve
+                 * procedere a calcolare il percorso minimo in base al costo (0) oppure in base
+                 * al tempo (1).
+                 *
+                 */
                 F_inizializza_dijkstra(C,nodoCittaPartenza,1);
                 StrutturaHeap H=C->strutturaGestioneHeapPtr;
                 Predecessore P=H->pPtr;
@@ -687,11 +724,23 @@ void F_utente_tratta_breve(CompagniaAerea C){
                 Distanza D=C->strutturaGestioneHeapPtr->dPtr;
                 if(D[indiceCittaArrivo].stima>0){
                      salvaTempoVolo=D[indiceCittaArrivo].stima;
-
+                    /*
+                     * Il tempo di volo è il MIGLIORE possibile ma il costo del volo dipende soltanto
+                     * dal percorso che si è fatto (qui Dijkstra lavora sul tempo non sul costo).
+                     * Per avere il costo totale di volo, durante la stampa del percorso vengono salvate in
+                     * una coda tutte le città del percorso. F_ottieni_tempo_volo_complessivo ripercorre tali
+                     * città andando a sommare tutti i costi di volo da una città all'altra.
+                     *
+                     */
                      Coda coda=H->codaCostoTempoEffettivoPtr;
                      salvaCostoVolo=F_ottieni_costo_volo_complessivo(C,&coda,nodoCittaArrivo->nomeCittaPtr);
                      H->codaCostoTempoEffettivoPtr=NULL;
 
+                    /*
+                     * Si mostrano all'utente le informazioni ottenute e viene data la possibilità
+                     * di accettare o meno il volo.
+                     *
+                     */
                     F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
                 }
 
