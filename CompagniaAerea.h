@@ -81,6 +81,8 @@ void F_stampa_lista_citta_grafo_lista_amministratore(ListaAdj *L);
 void F_stampa_lista_citta_arco_grafo_lista_amministratore(ListaAdj *L);
 ListaAdj F_ottieni_citta_piu_gettonata(ListaAdj *L);
 void F_dealloca_strutture(CompagniaAerea C);
+float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCittaArrivo);
+float F_ritorna_costo_volo_nodo_arco(ListaAdj *nodoPartenza, char *nomeCittaArrivo);
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione();
 void F_stampa_menu_gestione_compagnia_aerea_accesso_utente_registrato();

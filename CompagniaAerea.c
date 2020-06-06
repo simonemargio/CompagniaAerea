@@ -7,11 +7,32 @@
 #include "Grafo.h"
 #include "Dijkstra.h"
 #include "Coda.h"
-
 #define LUNGHEZZA_STRINGHE 20
+/*
+ * LUNGHEZZA_STRINGHE: alore numerico massimo di caratteri che verranno presi in input.
+ * Tale valore specifica elementi quali: nome, cognome, email, città ed altri.
+ *
+ */
 
 
+/*
+ *  Descrizione: gestione dalla compagnia aerea
+ *  Dettagli: gestione la compagnia aerea nella sua interezza
+ *  Parametri in: //
+ *  Parametri out: //
+ *  Chiamante: Main->main
+ *
+*/
 void F_gestione_compagnia_aerea(){
+    /*
+     * Cuore del programma, esegue:
+     * Alloca struttura principale che contiene tutte
+     * le informazioni per lavorare con la compagnia aerea,
+     * popolamento dell'albero degli amministratori,
+     * popolamento del grafo con le città e le ralative info,
+     * esecuzione della compagnia aerea e deallocazione di
+     * tutte le strutture usate
+     */
     CompagniaAerea C=NULL;
     F_alloca_struttura_compagnia_aerea(&C);
     F_alloca_struttura_gestione_grafo_citta(&C);
@@ -19,31 +40,17 @@ void F_gestione_compagnia_aerea(){
     F_popoplamento_grafo_mappa_voli(C);
     F_engine_compagnia_aerea(C);
     F_dealloca_strutture(C);
-
-
-
-    /* Test di Dijkstra */
-    /*ListaAdj nodoSorgente=G->StrutturaGrafoPtr;
-    int partenza=F_ottieni_indice_nodo_grafo_lista_da_nome_citta(&L,"Cagliari",0);
-    printf("%d",partenza);
-    nodoSorgente=F_ottieni_nome_citta_nodo_grafo_lista_da_indice(&L,partenza,0);
-    F_inizializza_dijkstra(C,nodoSorgente);
-    StrutturaHeap H=C->strutturaGestioneHeapPtr;
-    Predecessore P=H->pPtr;
-    F_stampa_percorso(L,P,4,14);*/
-
-    /* Funzioni di Test */
-  /*  Grafo G=C->strutturaGrafoPtr;
-    puts("\nCitta presenti:");
-    ListaAdj L=G->StrutturaGrafoPtr;
-    STAMPA_GRAFO_CITTA(&L);
-
-    puts("Amministratori:");
-    AlberoAmministratore T=C->strutturaAmministratoriPtr;
-    STAMPA_AMMINISTRATORI(T);*/
-
 }
 
+/*
+ *  Descrizione: schermata di login e registrazione
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_gestione_compagnia_aerea
+ *
+*/
 void F_engine_compagnia_aerea(CompagniaAerea C){
     int sceltaMenu=0, uscitaMenu=-1;
 
@@ -68,7 +75,25 @@ void F_engine_compagnia_aerea(CompagniaAerea C){
     }while (uscitaMenu!=0);
 }
 
+/*
+ *  Descrizione: registrazione di un utente
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_engine_compagnia_aerea
+ *
+*/
 void F_registrazione_utente(CompagniaAerea C){
+    /*
+     * Quando un utente si registra viene verificato che la scelta del suu username non sia
+     * già stato utilizzato nell'albero degli amministratori oppure nell'albero degli utenti
+     * già registrati.
+     * Viene verificato sempre prima l'albero degli amministratori essendo il più piccolo.
+     * L'utente ha un massimo di 3 tentativi di inserire correttamente un username non usato
+     * oppure le giuste password.
+     *
+     */
     F_stampa_testa_compagnia_aerea_registrazione();
     AlberoAmministratore TA=C->strutturaAmministratoriPtr; int tentativiPassword=3, tentativiUsername=3;
 
@@ -80,7 +105,12 @@ void F_registrazione_utente(CompagniaAerea C){
         username = F_chiedi_stringa("username (usato per loggarsi)");
         Amministratore amministratoreTrovato = F_cerca_amministratore_abr(&TA, username);
         if(amministratoreTrovato) { tentativiUsername--; printf("L'username (%s) e' gia' in uso. Hai ancora (%d) tentativi.\n",username,tentativiUsername);}
-        else break;
+        else{
+            AlberoUtente TU=C->strutturaUtentiPtr;
+            Utente utenteTrovato= F_cerca_utente_abr(&TU,username);
+            if(utenteTrovato) { tentativiUsername--; printf("L'username (%s) e' gia' in uso. Hai ancora (%d) tentativi.\n",username,tentativiUsername);}
+            else break;
+        }
         if(tentativiUsername==0)  { printf("\nRitorno al menu di login e registrazione.\n"); F_engine_compagnia_aerea(C);}
     }while(tentativiUsername!=0);
 
@@ -96,7 +126,11 @@ void F_registrazione_utente(CompagniaAerea C){
         else { tentativiPassword--; printf("Le password non coincidono. Hai ancora (%d) tentativi.\n",tentativiPassword); }
         if(tentativiPassword==0) { printf("\nRitorno al menu di login e registrazione.\n"); F_engine_compagnia_aerea(C);}
     }while (tentativiPassword!=0);
-
+    /*
+     * Si procede ad inserire l'utente nell'albero di tutti gli utenti registrati
+     * al sistema.
+     *
+     */
     Utente nuovoUtente=NULL; AlberoUtente TU=C->strutturaUtentiPtr;
 
     F_alloca_struttura_utente(&nuovoUtente);
@@ -106,7 +140,20 @@ void F_registrazione_utente(CompagniaAerea C){
     printf("\nRegistrazione completata. Puoi accedere con le seguente credenziali:\nUsername:(%s)\nPassword:(%s)\n",nuovoUtente->usernamePtr,nuovoUtente->passwordPtr);
 }
 
+/*
+ *  Descrizione: effettua il controllo per il login
+ *  Dettagli: utenti e amministratori possono loggarsi con le loro credenziuali
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_engine_compagnia_aerea
+ *
+*/
 void F_login_utente_e_amministratore(CompagniaAerea C) {
+    /*
+     * Viene verificato se esiste un amministratore e in caso di
+     * insuccesso un utente con username e password indicate.
+     */
     F_stampa_testa_compagnia_aerea_login();
     AlberoAmministratore TA = C->strutturaAmministratoriPtr;
     AlberoUtente TU = C->strutturaUtentiPtr;
@@ -116,6 +163,13 @@ void F_login_utente_e_amministratore(CompagniaAerea C) {
 
     Amministratore amministratoreTrovato = F_cerca_amministratore_abr(&TA, username);
 
+    /*
+     * Se le credenziali sono corrette di procede a visualizzare il menu
+     * per la gestione delle tratte e voli da parte dell'amministratore.
+     *
+     * Se invece le credenziali indicano un utente si procede alla gestione
+     * dei voli e alle possibili prenotazioni.
+     */
     if (amministratoreTrovato) {
         int confrontoPassword = F_confronto_stringhe(password, amministratoreTrovato->passwordPtr);
         if (confrontoPassword==0) F_gestione_principale_amministratore(C);
@@ -133,15 +187,15 @@ void F_login_utente_e_amministratore(CompagniaAerea C) {
     }
 }
 
-void F_stampa_informazioni_utente_registrato(Utente utenteRegistrato){
-    puts("---------------------------------------------");
-    printf("\nBenvenuto - %s - I tuoi dati\n",utenteRegistrato->usernamePtr);
-    printf("Nome: %s\n",utenteRegistrato->nomePtr);
-    printf("Cognome: %s\n",utenteRegistrato->cognomePtr);
-    printf("Email: %s\n",utenteRegistrato->email);
-    printf("Punti: %d\n",utenteRegistrato->punti);
-}
-
+/*
+ *  Descrizione: gestione delle prenotazioni dell'utente
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_login_utente_e_amministratore
+ *
+*/
 void F_gestione_principale_utente(CompagniaAerea C){
     int sceltaMenu=0, uscitaMenu=-1;
 
@@ -169,7 +223,15 @@ void F_gestione_principale_utente(CompagniaAerea C){
 
 }
 
-
+/*
+ *  Descrizione: visualizza le prenotazioni attive dell'utente
+ *  Dettagli: utilizza una coda dove sono salvate tutte le prenotazioni
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_gestione_principale_utente
+ *
+*/
 void F_utente_prenotazioni_attive(CompagniaAerea C){
     Utente U=C->utenteLoggatoPtr; CodaPrenotazione P=U->prenotazioniAttivePtr;
     F_stampa_testa_prenotazioni_attive_utente();
@@ -178,6 +240,14 @@ void F_utente_prenotazioni_attive(CompagniaAerea C){
 
 }
 
+/*
+ *  Descrizione: stampa le informazioni sulle prenotazioni attive
+ *  Dettagli: //
+ *  Parametri in: P->coda di tutte le prenotazioni effettuate
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_utente_prenotazioni_attive
+ *
+*/
 void F_stampa_utente_prenotazioni_attive(CodaPrenotazione *P){
     if(!F_struttura_vuota(*P)){
         printf("\nPartenza:(%s)\nArrivo:(%s)\nCosto totale:(%f)\nTempo di volo:(%f)\n\n",(*P)->cittaPartenza,(*P)->cittaArrivo,(*P)->costoVolo,(*P)->tempoVolo);
@@ -185,6 +255,15 @@ void F_stampa_utente_prenotazioni_attive(CodaPrenotazione *P){
     }
 }
 
+/*
+ *  Descrizione: gestisce il menu per gli amministratori
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_login_utente_e_amministratore
+ *
+*/
 void F_gestione_principale_amministratore(CompagniaAerea C){
     int sceltaMenu=0, uscitaMenu=-1;
 
@@ -219,7 +298,24 @@ void F_gestione_principale_amministratore(CompagniaAerea C){
     }while(uscitaMenu!=0);
 }
 
+/*
+ *  Descrizione: eliminazione di un volo
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante: CompagniaAerea->F_gestione_principale_amministratore
+ *
+*/
 void F_elimina_volo_amministratore(CompagniaAerea C){
+    /*
+     * L'eliminazione di un volo corrisponde all'eliminazione di un
+     * arco tra le due città specificate.
+     * Si verifica a catena l'esistenza della città di partenza e poi quella
+     * di arrivo.
+     * Verificate le città si elimina, se presente, l'arco.
+     *
+     */
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
 
     char *cittaPartenza=F_chiedi_stringa("il nome della citta' di partenza su cui eliminare il volo");
@@ -237,7 +333,23 @@ void F_elimina_volo_amministratore(CompagniaAerea C){
     }else printf("\nLa citta' di partenza (%s) non esiste. Si prega eventuamente di aggiungerla.\n",cittaPartenza);
 }
 
+/*
+ *  Descrizione: elimina una destinazione
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_gestione_principale_amministratore
+ *
+*/
 void F_elimina_destinazione_amministratore(CompagniaAerea C){
+    /*
+     * L'eliminazione di una destinazione corrisponde all'eliminazione
+     * di un nodo/città nel grafo con tutti i suoi relativi archi.
+     * Il procedimento è identico nell'eliminazione di un volo con la
+     * differenza che viene decrementato il numero di città presenti.
+     *
+     */
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
 
     char *cittaDaEliminare=F_chiedi_stringa("il nome della citta' da eliminare");
@@ -252,7 +364,24 @@ void F_elimina_destinazione_amministratore(CompagniaAerea C){
     }else  printf("\n La citta' da eliminare (%s) non e' presente.\n",cittaDaEliminare);
 }
 
+/*
+ *  Descrizione: aggiunge un volo
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_gestione_principale_amministratore
+ *
+*/
 void F_aggiungi_volo_amministratore(CompagniaAerea C){
+    /*
+     * L'aggiunta di un volo corrisponde all'aggiunta di un arco
+     * tra due città.
+     * Si verifica l'esistenza delle due città e si richiede il peso da
+     * associare come tempo di volo e costo del volo.
+     * Se l'arco è già presente non viene aggiunto.
+     *
+     */
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
 
     char *cittaPartenza=F_chiedi_stringa("il nome della citta' di partenza");
@@ -267,6 +396,11 @@ void F_aggiungi_volo_amministratore(CompagniaAerea C){
             float costoVolo=F_chiedi_float("Inserisci il costo del volo (es: 34.100)",5);
             float tempoVolo=F_chiedi_float("Inserisci il tempo di volo (es: 2.3400)",5);
 
+            /*
+             * L'algoritmo di Dijkstra lavoro SOLO con pesi positivi.
+             * Inoltre un valore pari a 0 risulta insensato come tempo di volo e costo.
+             *
+             */
             if(costoVolo>0 && tempoVolo>0){
                 F_aggiungi_arco_grafo_lista(&G,cittaPartenza,cittaArrivo,tempoVolo,costoVolo);
                 printf("Se il volo non e' gia' presente si confermano i seguenti dati: volo da (%s) a (%s) con tempo di volo (%f) e costo (%f).\n",cittaPartenza,cittaArrivo,tempoVolo,costoVolo);
@@ -276,7 +410,22 @@ void F_aggiungi_volo_amministratore(CompagniaAerea C){
     }else printf("\nLa citta' di partenza (%s) non esiste. Si prega eventuamente di aggiungerla.\n",cittaPartenza);
 }
 
+/*
+ *  Descrizione: aggiunge una destionazione
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante: CompagniaAerea->F_gestione_principale_amministratore
+ *
+*/
 void F_aggiungi_destinazione_amministratore(CompagniaAerea C){
+    /*
+     * L'aggiunta di una destinazione corrisponde all'aggiunta di un
+     * nuovo nodo nel grafo.
+     * Viene verificata che la nuova città non esista già.
+     *
+     */
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
 
     char *nuovaDestinazione=F_chiedi_stringa("il nome della citta' che rappresenta la nuova destinazione");
@@ -289,6 +438,15 @@ void F_aggiungi_destinazione_amministratore(CompagniaAerea C){
     }else printf("La citta' (%s) e' gia' presente.\n",nuovaDestinazione);
 }
 
+/*
+ *  Descrizione: gestione nuova prenotazione utente
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante: CompagniaAerea->F_gestione_principale_utente
+ *
+*/
 void F_utente_nuova_prenotazione(CompagniaAerea C){
     int sceltaMenu=0, uscitaMenu=-1;
 
@@ -314,6 +472,15 @@ void F_utente_nuova_prenotazione(CompagniaAerea C){
 
 }
 
+/*
+ *  Descrizione: gestione partenza e destinazione
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_utente_nuova_prenotazione
+ *
+*/
 void F_utente_partenza_e_destinazione(CompagniaAerea C){
     int sceltaMenu=0, uscitaMenu=-1;
 
@@ -338,8 +505,27 @@ void F_utente_partenza_e_destinazione(CompagniaAerea C){
     }while(uscitaMenu!=0);
 }
 
-
+/*
+ *  Descrizione: ricerca tratta più econimica
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_utente_partenza_e_destinazione
+ *
+*/
 void F_utente_tratta_piu_economica(CompagniaAerea C){
+    /*
+     * Viene richiesto all'utente l'inserimento della città di partenza
+     * e di arrivo le quali vengono verificate all'interno del grafo.
+     *
+     * Viene ricavato l'indice numerico associato alla città scelta (maggiori
+     * informazioni nella libreria Dijkstra.c) e il nodo delle città.
+     *
+     * Verificata la correttezza delle informazioni si procede a ricercare il percorso
+     * più economico.
+     *
+     */
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     F_stampa_lista_citta(C);
 
@@ -363,14 +549,13 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
                 Predecessore P=H->pPtr;
 
                 printf("Il percorso (con eventuali scali) fino al raggiungimento della citta' (%s):\n",nodoCittaArrivo->nomeCittaPtr);
-                F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
+                F_stampa_percorso(H,L,P,indiceCittaPartenza,indiceCittaArrivo);
 
                 Distanza D=C->strutturaGestioneHeapPtr->dPtr;
                 if(D[indiceCittaArrivo].stima>0){
                     salvaCostoVolo=D[indiceCittaArrivo].stima;
 
                     F_inizializza_dijkstra(C,nodoCittaPartenza,1);
-
                     D=C->strutturaGestioneHeapPtr->dPtr;
                     if(D[indiceCittaArrivo].stima>0) salvaTempoVolo=D[indiceCittaArrivo].stima;
 
@@ -385,8 +570,15 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
     }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
 }
 
-
-
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo){
     int puntiTotaliViaggio=0, sceltaMenu=0, uscitaMenu=-1; float costoVoloScontato=0; ListaAdj cittaDaIncrementareLaVisita=NULL;
 
@@ -443,7 +635,14 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
 
 }
 
-
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 int F_calcola_punti_volo_utente(float costoVolo){
     return ((30*(int)costoVolo)/100);
 }
@@ -472,29 +671,83 @@ void F_utente_tratta_breve(CompagniaAerea C){
                 Predecessore P=H->pPtr;
 
                 printf("Il percorso (con eventuali scali) fino al raggiungimento della citta' (%s):\n",nodoCittaArrivo->nomeCittaPtr);
-                F_stampa_percorso(L,P,indiceCittaPartenza,indiceCittaArrivo);
+                F_stampa_percorso(H,L,P,indiceCittaPartenza,indiceCittaArrivo);
 
 
                 Distanza D=C->strutturaGestioneHeapPtr->dPtr;
                 if(D[indiceCittaArrivo].stima>0){
                      salvaTempoVolo=D[indiceCittaArrivo].stima;
 
-                    F_inizializza_dijkstra(C,nodoCittaPartenza,0);
+                     Coda coda=H->codaCostoTempoEffettivoPtr;
+                     STAMPACODA(&coda);
+                     salvaCostoVolo=F_ottieni_costo_volo_complessivo(C,&coda,nodoCittaArrivo->nomeCittaPtr);
+                     H->codaCostoTempoEffettivoPtr=NULL;
 
-                    D=C->strutturaGestioneHeapPtr->dPtr;
-                    if(D[indiceCittaArrivo].stima>0) salvaCostoVolo=D[indiceCittaArrivo].stima;
 
                     F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
                 }
 
             }else printf("\nLa citta' di partenza (%s) e' la stessa di arrivo (%s).\n",cittaPartenza,cittaArrivo);
-        }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaPartenza);
+        }else printf("\nLa citta' di arrivo (%s) non esiste.\n",cittaArrivo);
     }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
 }
 
+float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCittaArrivo){
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+    float costoVoloComplessivo=0, costoVoloSingoloArco=0; ListaAdj nodoCittaPartenza=NULL; //nodoCittaArco=NULL;
+
+    while(*Q){
+        Coda cittaPartenza=F_restituisci_top_coda(Q);
+        F_dequeue(Q);
+        Coda cittaArco=F_restituisci_top_coda(Q);
+
+
+        char *nomeCitta=cittaPartenza->elementoPtr;
+        nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,nomeCitta);
+
+        if(cittaArco){
+
+         //   nodoCittaArco=F_cerca_nodo_grafo_lista(&L,cittaArco->elementoPtr);
+
+            costoVoloSingoloArco=F_ritorna_costo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,cittaArco->elementoPtr);
+            costoVoloComplessivo=costoVoloComplessivo+costoVoloSingoloArco;
+      //      printf("\nCosto volo da |%s| a |%s| |%f|\n",nodoCittaPartenza->nomeCittaPtr,nodoCittaArco->nomeCittaPtr,costoVoloSingoloArco);
+        }
+
+    }
+
+    if(nodoCittaPartenza) {
+        costoVoloSingoloArco=F_ritorna_costo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,nomeCittaArrivo);
+        costoVoloComplessivo=costoVoloComplessivo+costoVoloSingoloArco;
+       // printf("\nBBBBBBCosto volo da |%s| a |%s| |%f|\n",nodoCittaPartenza->nomeCittaPtr,nomeCittaArrivo,costoVoloSingoloArco);
+    }
 
 
 
+    return costoVoloComplessivo;
+}
+
+float F_ritorna_costo_volo_nodo_arco(ListaAdj *nodoPartenza, char *nomeCittaArrivo){
+    if(!F_struttura_vuota(*nodoPartenza)){
+        int confrontoNomiCitta=F_confronto_stringhe((*nodoPartenza)->nomeCittaPtr,nomeCittaArrivo);
+
+        if(confrontoNomiCitta==0){
+            return (*nodoPartenza)->pesoCostoPtr->peso;
+        }
+        return F_ritorna_costo_volo_nodo_arco(&(*nodoPartenza)->arcoPtr,nomeCittaArrivo);
+    }
+    return 0;
+}
+
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante: CompagniaAerea->F_utente_partenza_e_destinazione
+ *
+*/
 void F_utente_solo_partenza(CompagniaAerea C){
     int sceltaMenu=0, uscitaMenu=-1;
 
@@ -519,6 +772,15 @@ void F_utente_solo_partenza(CompagniaAerea C){
     }while(uscitaMenu!=0);
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_utente_meta_piu_economica(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     F_stampa_lista_citta(C);
@@ -548,6 +810,15 @@ void F_utente_meta_piu_economica(CompagniaAerea C){
 
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_utente_meta_piu_gettonata(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
 
@@ -557,6 +828,14 @@ void F_utente_meta_piu_gettonata(CompagniaAerea C){
     else printf("\nAl momento non e' presente nessuna citta' \"gettonata\".\n");
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 ListaAdj F_ottieni_citta_piu_gettonata(ListaAdj *L){
     int valoreVisitaCittaMassimo=0; ListaAdj cittaDaRitornare=NULL;
 
@@ -573,7 +852,15 @@ ListaAdj F_ottieni_citta_piu_gettonata(ListaAdj *L){
     return cittaDaRitornare;
 }
 
-
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_stampa_lista_citta(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     printf("Lista delle citta' presenti:\n");
@@ -609,6 +896,15 @@ void F_stampa_lista_citta_arco_grafo_lista_amministratore(ListaAdj *L){
     }
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr;
 
@@ -675,11 +971,29 @@ void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
     C->strutturaGrafoPtr=G;
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_popolamento_amministratori(CompagniaAerea C){
     int numeroAmministratori=3;
     F_esegui_popolamento_amministratori(C,numeroAmministratori);
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_esegui_popolamento_amministratori(CompagniaAerea C, int numeroAmministratori){
     if(numeroAmministratori!=0){
         F_polamento_automatico_amministratori(C,numeroAmministratori);
@@ -687,6 +1001,15 @@ void F_esegui_popolamento_amministratori(CompagniaAerea C, int numeroAmministrat
     }
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_polamento_automatico_amministratori(CompagniaAerea C, int numeroAmministratore){
     Amministratore nuovoAmministratore=NULL; AlberoAmministratore T=C->strutturaAmministratoriPtr;
     char *nickname=NULL, *email=NULL, *password=NULL;
@@ -717,7 +1040,14 @@ void F_polamento_automatico_amministratori(CompagniaAerea C, int numeroAmministr
     C->strutturaAmministratoriPtr=T;
 }
 
-
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_alloca_struttura_amministratore(Amministratore *nuovoAmministratore){
     (*nuovoAmministratore)=(struct struttura_gestione_amministratore*)malloc(sizeof(struct struttura_gestione_amministratore));
     if(F_struttura_vuota(*nuovoAmministratore)) F_error(2);
@@ -743,7 +1073,6 @@ void F_alloca_struttura_utente(Utente *nuovoUtente){
     (*nuovoUtente)->nomePtr=NULL;
     (*nuovoUtente)->cognomePtr=NULL;
     (*nuovoUtente)->punti=0;
-
 }
 
 void F_inserisci_informazioni_utente(Utente *nuovoUtente, char *nickname, char *email, char *password, char *nome, char *cognome){
@@ -764,7 +1093,6 @@ void F_alloca_struttura_compagnia_aerea(CompagniaAerea *C){
     (*C)->utenteLoggatoPtr=NULL;
 }
 
-
 void F_alloca_struttura_gestione_grafo_citta(CompagniaAerea *C){
     Grafo G=(struct struttura_gestione_grafi*)malloc(sizeof(struct struttura_gestione_grafi));
     if(F_struttura_vuota(G)) F_error(3);
@@ -773,15 +1101,38 @@ void F_alloca_struttura_gestione_grafo_citta(CompagniaAerea *C){
     (*C)->strutturaGrafoPtr=G;
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 int F_struttura_vuota(void *S){
     return (!S);
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 int F_confronto_stringhe(char *s1, char *s2){
     return strcasecmp(s1,s2);
 }
 
-
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 int F_chiedi_intero(char *s,int dim,char minimo,char massimo){
     /*
      * Permette di prendere un interno dall'input. Vengono scartati tutti
@@ -826,11 +1177,18 @@ int F_chiedi_intero(char *s,int dim,char minimo,char massimo){
     return intero_preso;
 }
 
-
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 char *F_chiedi_stringa(char *s){
     /*
      * Viene preso qualsiasi carattere in imput a patto che:
-     * non si superi il valore LUNGHEZZA_TITOLO_LIBRO_NOMECOGNOME_STUDENTE,
+     * non si superi il valore LUNGHEZZA_STRINGHE,
      * non si arrivi a un new line
      * non si arrivi a end of file
      *
@@ -866,6 +1224,14 @@ char *F_chiedi_stringa(char *s){
     return stringa_uscita;
 }
 
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 float F_chiedi_float(char *s, int dim){
     char tmp[dim],c='*';
     int i=0;
@@ -896,7 +1262,14 @@ float F_chiedi_float(char *s, int dim){
     return *elemento;
 }
 
-
+/*
+ *  Descrizione:
+ *  Dettagli:
+ *  Parametri in:
+ *  Parametri out:
+ *  Chiamante:
+ *
+*/
 void F_dealloca_strutture(CompagniaAerea C){
     AlberoUtente alberoUtente=C->strutturaUtentiPtr;
     AlberoAmministratore alberoAmministratore=C->strutturaAmministratoriPtr;
@@ -915,6 +1288,15 @@ void F_dealloca_strutture(CompagniaAerea C){
     if(!F_struttura_vuota(alberoAmministratore)) F_dealloca_struttura_albero_amministratore(&alberoAmministratore);
     if(!F_struttura_vuota(L))  F_dealloca_struttura_grafo_lista(&L);
     free(C);
+}
+
+void F_stampa_informazioni_utente_registrato(Utente utenteRegistrato){
+    puts("---------------------------------------------");
+    printf("\nBenvenuto - %s - I tuoi dati\n",utenteRegistrato->usernamePtr);
+    printf("Nome: %s\n",utenteRegistrato->nomePtr);
+    printf("Cognome: %s\n",utenteRegistrato->cognomePtr);
+    printf("Email: %s\n",utenteRegistrato->email);
+    printf("Punti: %d\n",utenteRegistrato->punti);
 }
 
 void F_stampa_menu_gestione_compagnia_aerea_login_registrazione(){
@@ -998,12 +1380,3 @@ void F_stampa_menu_accettare_o_meno_volo_utente(){
     puts("0] Annulla\n");
 }
 
-/* Funzioni di Test */
-void STAMPA_AMMINISTRATORI(AlberoAmministratore T){
-    if(T){
-        STAMPA_AMMINISTRATORI(T->sxPtr);
-        Amministratore a=T->nodoAmministratorePtr;
-        printf("Nickname:(%s)-Email:(%s)-Password:(%s).\n",a->nicknamePtr,a->email,a->passwordPtr);
-        STAMPA_AMMINISTRATORI(T->dxPtr);
-    }
-}

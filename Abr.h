@@ -31,8 +31,7 @@ void F_dealloca_struttura_albero_amministratore(AlberoAmministratore *T);
 void F_dealloca_struttura_albero_utente(AlberoUtente *T);
 
 
-/* Funzioni di Test */
-void STAMPA_AMMINISTRATORI(AlberoAmministratore T);
+
 
 
 #endif //COMPAGNIAAEREA_ABR_H

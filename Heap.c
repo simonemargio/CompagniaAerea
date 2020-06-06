@@ -350,6 +350,7 @@ void F_alloca_struttura_generale_gestione_albero_heap(StrutturaHeap *H){
     (*H)->pPtr=NULL;
     (*H)->heapsize=0;
     (*H)->alberoHeapPtr=NULL;
+    (*H)->codaCostoTempoEffettivoPtr=NULL;
 }
 
 

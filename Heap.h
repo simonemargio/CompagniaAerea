@@ -7,6 +7,7 @@ struct struttura_gestione_albero_heap{
     int heapsize;
     struct struttura_distanza_d *dPtr;
     struct struttura_predecessore_p *pPtr;
+    struct struttura_elemento_coda *codaCostoTempoEffettivoPtr;
 };
 
 

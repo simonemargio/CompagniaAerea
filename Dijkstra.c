@@ -75,7 +75,7 @@ void F_relax(StrutturaHeap H, AlberoHeap u, int indiceU, int indiceV, float arco
 
 }
 
-void F_stampa_percorso(ListaAdj L,Predecessore P,int indiceCittaPartenza,int indiceCittaArrivo){
+void F_stampa_percorso(StrutturaHeap H,ListaAdj L,Predecessore P,int indiceCittaPartenza,int indiceCittaArrivo){
     if(indiceCittaPartenza!=indiceCittaArrivo){
         if(P[indiceCittaArrivo].nodoPredecessore==NULL){
             printf("Mi dispiace ma non ci sono tratte di voli disponibili.\n");
@@ -84,8 +84,12 @@ void F_stampa_percorso(ListaAdj L,Predecessore P,int indiceCittaPartenza,int ind
           AlberoHeap p=P[indiceCittaArrivo].nodoPredecessore;
           int indiceCitta=p->indicePosizioneCittaPtr;
 
-          F_stampa_percorso(L,P,indiceCittaPartenza,indiceCitta);
+          F_stampa_percorso(H,L,P,indiceCittaPartenza,indiceCitta);
           printf("(%s)\n",p->nomeCitta);
+          Coda C=H->codaCostoTempoEffettivoPtr;
+
+          F_enqueue(&C,p->nomeCitta,0,0);
+          H->codaCostoTempoEffettivoPtr=C;
         }
     }
 }
@@ -96,8 +100,6 @@ void F_crea_coda_vertici_adiacenti(Coda *C, ListaAdj *L){
         F_crea_coda_vertici_adiacenti(C,(&(*L)->arcoPtr));
     }
 }
-
-
 
 void F_alloca_array_predecessore_p(Predecessore *P, int numeroNodi){
     int indiceScorrimento=0;
