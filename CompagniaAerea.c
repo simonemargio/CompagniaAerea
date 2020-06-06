@@ -38,6 +38,15 @@ void F_gestione_compagnia_aerea(){
     F_alloca_struttura_gestione_grafo_citta(&C);
     F_popolamento_amministratori(C);
     F_popoplamento_grafo_mappa_voli(C);
+
+/*
+    Grafo G=C->strutturaGrafoPtr;
+    puts("\nCitta presenti:");
+    ListaAdj L=G->StrutturaGrafoPtr;
+    STAMPA_GRAFO_CITTA(&L);*/
+
+
+
     F_engine_compagnia_aerea(C);
     F_dealloca_strutture(C);
 }
@@ -555,9 +564,10 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
                 if(D[indiceCittaArrivo].stima>0){
                     salvaCostoVolo=D[indiceCittaArrivo].stima;
 
-                    F_inizializza_dijkstra(C,nodoCittaPartenza,1);
-                    D=C->strutturaGestioneHeapPtr->dPtr;
-                    if(D[indiceCittaArrivo].stima>0) salvaTempoVolo=D[indiceCittaArrivo].stima;
+                    Coda coda=H->codaCostoTempoEffettivoPtr;
+                    salvaTempoVolo=F_ottieni_tempo_volo_complessivo(C,&coda,nodoCittaArrivo->nomeCittaPtr);
+                    H->codaCostoTempoEffettivoPtr=NULL;
+
 
                     F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
                 }
@@ -679,10 +689,8 @@ void F_utente_tratta_breve(CompagniaAerea C){
                      salvaTempoVolo=D[indiceCittaArrivo].stima;
 
                      Coda coda=H->codaCostoTempoEffettivoPtr;
-                     STAMPACODA(&coda);
                      salvaCostoVolo=F_ottieni_costo_volo_complessivo(C,&coda,nodoCittaArrivo->nomeCittaPtr);
                      H->codaCostoTempoEffettivoPtr=NULL;
-
 
                     F_utente_stampa_costo_e_tempo_totale_volo(C,nodoCittaPartenza->nomeCittaPtr,nodoCittaArrivo->nomeCittaPtr,salvaCostoVolo,salvaTempoVolo);
                 }
@@ -694,24 +702,19 @@ void F_utente_tratta_breve(CompagniaAerea C){
 
 float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCittaArrivo){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
-    float costoVoloComplessivo=0, costoVoloSingoloArco=0; ListaAdj nodoCittaPartenza=NULL; //nodoCittaArco=NULL;
+    float costoVoloComplessivo=0, costoVoloSingoloArco=0; ListaAdj nodoCittaPartenza=NULL;
 
     while(*Q){
         Coda cittaPartenza=F_restituisci_top_coda(Q);
         F_dequeue(Q);
         Coda cittaArco=F_restituisci_top_coda(Q);
 
-
         char *nomeCitta=cittaPartenza->elementoPtr;
         nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,nomeCitta);
 
         if(cittaArco){
-
-         //   nodoCittaArco=F_cerca_nodo_grafo_lista(&L,cittaArco->elementoPtr);
-
             costoVoloSingoloArco=F_ritorna_costo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,cittaArco->elementoPtr);
             costoVoloComplessivo=costoVoloComplessivo+costoVoloSingoloArco;
-      //      printf("\nCosto volo da |%s| a |%s| |%f|\n",nodoCittaPartenza->nomeCittaPtr,nodoCittaArco->nomeCittaPtr,costoVoloSingoloArco);
         }
 
     }
@@ -719,10 +722,7 @@ float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCitta
     if(nodoCittaPartenza) {
         costoVoloSingoloArco=F_ritorna_costo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,nomeCittaArrivo);
         costoVoloComplessivo=costoVoloComplessivo+costoVoloSingoloArco;
-       // printf("\nBBBBBBCosto volo da |%s| a |%s| |%f|\n",nodoCittaPartenza->nomeCittaPtr,nomeCittaArrivo,costoVoloSingoloArco);
     }
-
-
 
     return costoVoloComplessivo;
 }
@@ -738,6 +738,50 @@ float F_ritorna_costo_volo_nodo_arco(ListaAdj *nodoPartenza, char *nomeCittaArri
     }
     return 0;
 }
+
+float F_ottieni_tempo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCittaArrivo){
+    Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
+    float tempoVoloComplessivo=0, tempoVoloSingoloArco=0; ListaAdj nodoCittaPartenza=NULL;
+
+    while(*Q){
+        Coda cittaPartenza=F_restituisci_top_coda(Q);
+        F_dequeue(Q);
+        Coda cittaArco=F_restituisci_top_coda(Q);
+
+
+        char *nomeCitta=cittaPartenza->elementoPtr;
+        nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,nomeCitta);
+
+        if(cittaArco){
+            tempoVoloSingoloArco=F_ritorna_tempo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,cittaArco->elementoPtr);
+            tempoVoloComplessivo=tempoVoloComplessivo+tempoVoloSingoloArco;
+
+        }
+    }
+
+    if(nodoCittaPartenza) {
+        tempoVoloSingoloArco=F_ritorna_tempo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,nomeCittaArrivo);
+        tempoVoloComplessivo=tempoVoloComplessivo+tempoVoloSingoloArco;
+
+    }
+
+    return tempoVoloComplessivo;
+}
+
+float F_ritorna_tempo_volo_nodo_arco(ListaAdj *nodoPartenza, char *nomeCittaArrivo){
+
+    if(!F_struttura_vuota(*nodoPartenza)){
+        int confrontoNomiCitta=F_confronto_stringhe((*nodoPartenza)->nomeCittaPtr,nomeCittaArrivo);
+
+        if(confrontoNomiCitta==0){
+            return (*nodoPartenza)->pesoTempoPtr->peso;
+        }
+        return F_ritorna_tempo_volo_nodo_arco(&(*nodoPartenza)->arcoPtr,nomeCittaArrivo);
+    }
+    return 0;
+}
+
+
 
 /*
  *  Descrizione:
