@@ -4,6 +4,20 @@
 #include "Coda.h"
 #include "Grafo.h"
 
+/*
+ * Descrizione: struttura principale per la gestione della compagnia aera
+ * Dettagli: tutte le informazioni che ruotano attorno alla compagnia aerea vengono
+ *           gestite tramite questa struttura
+ * Contenuto: strutturaUtentiPtr: punta all'albero contentente l'informazione
+ *            degli utentei che vengono registrati dalla compagnia aera
+ *            strutturaAmministratoriPtr: punta all'albero contenente l'informazione di
+ *            tutti gli amministratori che possono amministrare le città e i voli
+ *            strutturaGrafoPtr: punta alla struttura che gestisce la lista di liste di
+ *            tutte le città presenti nel grafo con i loro relativi archi
+ *            strutturaGestioneHeapPtr: punta alla struttura contenente tutte le
+ *            informazioni per gestire l'algoritmo di Dijkstra
+ *            utenteLoggatoPtr: punta alle informazioni dell'utente che si è loggato
+ */
 struct struttura_gestione_compagnia_aerea{
     struct struttura_nodo_albero_utente *strutturaUtentiPtr;
     struct struttura_nodo_albero_amministratore *strutturaAmministratoriPtr;
@@ -12,7 +26,19 @@ struct struttura_gestione_compagnia_aerea{
     struct struttua_gestione_utente *utenteLoggatoPtr;
 };
 
-
+/*
+ * Descrizione: struttura che definisce un utente
+ * Dettagli: rappresenta l'informazione che ogni nodo dell'albero
+ *           struttura_nodo_albero_utente dispone
+ * Contenuto: nomePtr: nome dell'utente
+ *            cognomePtr: cognome dell'utente
+ *            usernamePtr: username associato all'utente
+ *            email: email dell'utente
+ *            passwordPtr: password dell'utente
+ *            punti: totale punti che l'utente dispone in base ai voli
+ *            prenotazioniAttivePtr: coda di tutte le prenotazioni che
+ *            l'utente ha effettuato
+ */
 struct struttua_gestione_utente{
     char *nomePtr;
     char *cognomePtr;
@@ -23,6 +49,14 @@ struct struttua_gestione_utente{
     struct struttura_elemento_coda_prenotazione *prenotazioniAttivePtr;
 };
 
+/*
+ * Descrizione: struttura che definisce un amministratore
+ * Dettagli: rappresenta l'informazione che ogni nodo dell'albero
+ *           struttura_nodo_albero_amministratore dispone
+ * Contenuto: nicknamePtr: nome dell'amministratore
+ *            email: email dell'amministratore
+ *            passwordPtr: password dell'amministratore
+ */
 struct struttura_gestione_amministratore{
     char *nicknamePtr;
     char *email;
@@ -32,8 +66,6 @@ struct struttura_gestione_amministratore{
 typedef struct struttura_gestione_compagnia_aerea *CompagniaAerea;
 typedef struct struttua_gestione_utente *Utente;
 typedef struct struttura_gestione_amministratore *Amministratore;
-
-
 
 void F_gestione_compagnia_aerea();
 void F_alloca_struttura_compagnia_aerea(CompagniaAerea *C);
@@ -94,9 +126,5 @@ void F_stampa_menu_gestione_compagnia_aerea_nuova_prenotazione_menu_solo_partenz
 void F_stampa_menu_gestione_compagnia_aerea_amministratore();
 void F_stampa_testa_prenotazioni_attive_utente();
 void F_stampa_menu_accettare_o_meno_volo_utente();
-
-
-
-
 
 #endif //COMPAGNIAAEREA_COMPAGNIAAEREA_H

@@ -38,15 +38,6 @@ void F_gestione_compagnia_aerea(){
     F_alloca_struttura_gestione_grafo_citta(&C);
     F_popolamento_amministratori(C);
     F_popoplamento_grafo_mappa_voli(C);
-
-/*
-    Grafo G=C->strutturaGrafoPtr;
-    puts("\nCitta presenti:");
-    ListaAdj L=G->StrutturaGrafoPtr;
-    STAMPA_GRAFO_CITTA(&L);*/
-
-
-
     F_engine_compagnia_aerea(C);
     F_dealloca_strutture(C);
 }

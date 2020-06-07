@@ -3,23 +3,34 @@
 
 #include "CompagniaAerea.h"
 
+/*
+ * Descrizione: struttura che definisce un nodo utente
+ * Dettagli: rappresenta l'informazione del nodo dell'albero degli utenti
+ * Contenuto: nodoUtentePtr: puntatore alle informazioni dell'utente definite
+ *                           nella struttura struttua_gestione_utente
+ *            sx/dxPtr: puntatori al nodo sinistro e destro
+ */
 struct struttura_nodo_albero_utente{
     struct struttua_gestione_utente *nodoUtentePtr;
     struct struttura_nodo_albero_utente *sxPtr;
     struct struttura_nodo_albero_utente *dxPtr;
 };
 
+/*
+ * Descrizione: struttura che definisce un nodo amministratore
+ * Dettagli: rappresenta l'informazione del nodo dell'albero degli amministratori
+ * Contenuto: nodoUtentePtr: puntatore alle informazioni dell'utente definite
+ *                           nella struttura struttura_gestione_amministratore
+ *            sx/dxPtr: puntatori al nodo sinistro e destro
+ */
 struct struttura_nodo_albero_amministratore{
     struct struttura_gestione_amministratore *nodoAmministratorePtr;
     struct struttura_nodo_albero_amministratore *sxPtr;
     struct struttura_nodo_albero_amministratore *dxPtr;
 };
 
-
 typedef struct struttura_nodo_albero_utente *AlberoUtente;
 typedef struct struttura_nodo_albero_amministratore *AlberoAmministratore;
-
-
 
 void F_inserisci_amministratore_abr(AlberoAmministratore *T, Amministratore amministratoreDaInserire);
 void F_alloca_struttura_amministratore_abr(AlberoAmministratore *nuovoAmministratore);

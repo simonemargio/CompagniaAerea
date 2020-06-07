@@ -1,7 +1,13 @@
 #ifndef COMPAGNIAAEREA_HEAP_H
 #define COMPAGNIAAEREA_HEAP_H
 
-
+/*
+ * Descrizione: struttura generale per gestire un albero heap e Dijkstra
+ * Dettagli:
+ * Contenuto:   alberoHeapPtr:
+ *              heapsize: costo/tempo di un arco tra due città
+ *
+ */
 struct struttura_gestione_albero_heap{
     struct struttura_nodo_albero_heap *alberoHeapPtr;
     int heapsize;
@@ -10,7 +16,11 @@ struct struttura_gestione_albero_heap{
     struct struttura_elemento_coda *codaCostoTempoEffettivoPtr;
 };
 
-
+/*
+ * Descrizione:
+ * Dettagli:
+ * Contenuto:
+ */
 struct struttura_nodo_albero_heap{
     char *nomeCitta;
     int indicePosizioneCittaPtr;
@@ -19,20 +29,28 @@ struct struttura_nodo_albero_heap{
     struct struttura_nodo_albero_heap *dxPtr;
 };
 
+/*
+ * Descrizione:
+ * Dettagli:
+ * Contenuto:
+ */
 struct struttura_distanza_d{
     float stima;
 };
 
+/*
+ * Descrizione:
+ * Dettagli:
+ * Contenuto:
+ */
 struct struttura_predecessore_p{
     void *nodoPredecessore;
 };
-
 
 typedef struct struttura_gestione_albero_heap *StrutturaHeap;
 typedef struct struttura_nodo_albero_heap *AlberoHeap;
 typedef struct struttura_distanza_d *Distanza;
 typedef struct struttura_predecessore_p *Predecessore;
-
 
 void F_alloca_struttura_generale_gestione_albero_heap(StrutturaHeap *H);
 void F_alloca_nodo_albero_heap(AlberoHeap *T, char *nomeCittaDaInserire, int indiceCittaDaInserire, float *stimaCitta);
