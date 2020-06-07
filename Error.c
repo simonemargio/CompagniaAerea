@@ -2,6 +2,13 @@
 #include <stdlib.h>
 #include "Error.h"
 
+/*
+ *  Descrizione: funzione errore
+ *  Dettagli: stampa determinati errori che possono verificasi
+ *  Parametri in: e->valore numerico che identifica l'errore
+ *  Parametri out: //
+ *
+*/
 void F_error(int e){
     puts("\nERRORE:");
     switch(e){
