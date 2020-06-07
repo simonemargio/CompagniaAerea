@@ -47,9 +47,6 @@ void F_enqueue_coda_prenotazione(CodaPrenotazione *C, char *cittaPartenza, char 
 void F_dealloca_struttura_coda_prenotazione(CodaPrenotazione *C);
 void F_elimina_elemento_coda_prenotazione_in_testa(CodaPrenotazione *C);
 
-//void F_dealloca_struttura_coda(Coda *C);
-//void F_elimina_elemento_coda_in_testa(Coda *C);
-
 /* Funzione di Test */
 void STAMPACODA(Coda *Q);
 
