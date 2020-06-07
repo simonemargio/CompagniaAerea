@@ -44,11 +44,13 @@ void F_dequeue(Coda *C);
 void *F_restituisci_top_coda(Coda *C);
 void F_alloca_elemento_coda_prenotazione(CodaPrenotazione *C);
 void F_enqueue_coda_prenotazione(CodaPrenotazione *C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo);
-void F_dealloca_struttura_coda(Coda *C);
-void F_elimina_elemento_coda_in_testa(Coda *C);
 void F_dealloca_struttura_coda_prenotazione(CodaPrenotazione *C);
 void F_elimina_elemento_coda_prenotazione_in_testa(CodaPrenotazione *C);
 
+//void F_dealloca_struttura_coda(Coda *C);
+//void F_elimina_elemento_coda_in_testa(Coda *C);
+
+/* Funzione di Test */
 void STAMPACODA(Coda *Q);
 
 #endif //COMPAGNIAAEREA_CODA_H
