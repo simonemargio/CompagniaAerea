@@ -598,12 +598,17 @@ void F_utente_tratta_piu_economica(CompagniaAerea C){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: permette all'utente di confermare il volo
+ *  Dettagli: calcolo dei punti e salvataggio dei voli
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
- *  Parametri out:
- *  Chiamante:
+ *                cittaPartenza->nome della citta di partenza del volo
+ *                cittaArrivo->nome città di arrivo
+ *                costoVolo->costo del volo scelto
+ *                tempoVolo->tempo di volo
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_utente_tratta_piu_economica
+ *             CompagniaAerea->F_utente_tratta_breve
  *
 */
 void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPartenza, char *cittaArrivo, float costoVolo, float tempoVolo){
@@ -611,6 +616,14 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
 
     printf("\nPartenza:(%s)\nArrivo:(%s)\nCosto totale del viaggio:(%f)\nTempo di volo:(%f)\n",cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
 
+    /*
+     * I punti di volo corrispondono ad uno sconto del 30% sul prezzo del volo.
+     * Vengono calcolati come punti di tipo intero (più realistico e meglio da
+     * vedere visavamente)
+     * Si sommano i punti del volo con i punti precedentemente accumulati dall'utente
+     * e li si sottraggono al costo del volo.
+     *
+     */
     int puntiVolo=F_calcola_punti_volo_utente(costoVolo);
 
     puntiTotaliViaggio=C->utenteLoggatoPtr->punti+puntiVolo;
@@ -630,9 +643,20 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
                puts("Scelta non valida.\n");
                break;
            case 0:
+               /*
+                * L'utente rifiuta il volo.
+                */
                uscitaMenu=0;
                break;
            case 1:
+               /*
+                * Conferma volo utilizzando i punti utente.
+                * Salvataggio del volo nella coda delle prenotazioni.
+                * Viene incrementata la visita della città di arrivo (usato per la città più gettonata).
+                * Se l'utente viaggia gratis (costoVoloScontato<0) vi si aggiungono i punti di differenza
+                * nei punti totali dell'utente.
+                *
+                */
                F_enqueue_coda_prenotazione(&C->utenteLoggatoPtr->prenotazioniAttivePtr,cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
                puts("\nVolo confermato. Puoi visualizzarlo in Prenotazioni attive.\n");
 
@@ -646,6 +670,12 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
                uscitaMenu=0;
                break;
            case 2:
+               /*
+                * Conferma volo senza utilizzare i punti utente.
+                * I punti vengono aggiunti all'utente e il volo salvato.
+                * La città di arrivo ne viene incrementata la visita.
+                *
+                */
                C->utenteLoggatoPtr->punti=C->utenteLoggatoPtr->punti+puntiVolo;
 
                F_enqueue_coda_prenotazione(&C->utenteLoggatoPtr->prenotazioniAttivePtr,cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
@@ -663,17 +693,26 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: calcolo dei punti in base al costo del volo
+ *  Dettagli: ogni volo viene scontato del 30% sul prezzo
+ *  Parametri in: costoVolo->costo totale del volo scelto
+ *  Parametri out: prezzo volo scontato
+ *  Chiamante: CompagniaAerea->F_utente_stampa_costo_e_tempo_totale_volo
  *
 */
 int F_calcola_punti_volo_utente(float costoVolo){
     return ((30*(int)costoVolo)/100);
 }
 
+/*
+ *  Descrizione: ricerca tratta più breve
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_utente_partenza_e_destinazione
+ *
+*/
 void F_utente_tratta_breve(CompagniaAerea C){
     /*
      * Viene richiesto all'utente l'inserimento della città di partenza
@@ -749,15 +788,40 @@ void F_utente_tratta_breve(CompagniaAerea C){
     }else printf("\nLa citta' di partenza (%s) non esiste.\n",cittaPartenza);
 }
 
+/*
+ *  Descrizione: calcolo del costo totale di un volo
+ *  Dettagli: se l'utente cerca la tratta più BREVE viene calcolato il
+ *            costo totale del volo ripercorrendo tutte le città scelte
+ *            da Dijkstra
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *                Q->coda contenente il percorso delle città
+ *                nomeCittaArrivo->nome della città di arrivo
+ *  Parametri out: costo complessivo del volo
+ *  Chiamante: CompagniaAerea->F_utente_tratta_breve
+ *
+*/
 float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCittaArrivo){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     float costoVoloComplessivo=0, costoVoloSingoloArco=0; ListaAdj nodoCittaPartenza=NULL;
-
+    /*
+     * La coda contiene tutte le città visitate da Dijkstra dal nodo di partenza (sempre presente)
+     * fino alla città di arrivo-1 (esempio Volo:Napoli-Bari, Coda: Napoli-Milano-Ibiza. nomeCittaArrivo=Bari).
+     *
+     * La coda prende una coppia di citta (cittaPartenza e cittaArco) e prende il costo del volo tra queste.
+     * Se cittaArco è NULL allora si è arrivati a destinazione, si procede a calcolare l'ultimo costo tra l'arco
+     * della cittaPartenza e nomeCittaArrico.
+     */
     while(*Q){
         Coda cittaPartenza=F_restituisci_top_coda(Q);
         F_dequeue(Q);
         Coda cittaArco=F_restituisci_top_coda(Q);
 
+        /*
+         * Per prendere il costo devo prendere il nodo nel grafo che ha il nome
+         * di città preso dalla coda.
+         *
+         */
         char *nomeCitta=cittaPartenza->elementoPtr;
         nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,nomeCitta);
 
@@ -767,7 +831,9 @@ float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCitta
         }
 
     }
-
+    /*
+     * La coda è terminata. Procedo a calcolare l'ultimo costo tra l'arco della cittaPartenza e nomeCittaArrico
+     */
     if(nodoCittaPartenza) {
         costoVoloSingoloArco=F_ritorna_costo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,nomeCittaArrivo);
         costoVoloComplessivo=costoVoloComplessivo+costoVoloSingoloArco;
@@ -776,6 +842,15 @@ float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCitta
     return costoVoloComplessivo;
 }
 
+/*
+ *  Descrizione: ritorna il costo di un volo tra due città
+ *  Dettagli: //
+ *  Parametri in: nodoPartenza->nodo arco su cui trovare la città di arrivo
+ *                nomeCittaArrivo->nome della città di arrivo
+ *  Parametri out: costo del volo tra le due città
+ *  Chiamante: CompagniaAerea->F_ottieni_costo_volo_complessivo
+ *
+*/
 float F_ritorna_costo_volo_nodo_arco(ListaAdj *nodoPartenza, char *nomeCittaArrivo){
     if(!F_struttura_vuota(*nodoPartenza)){
         int confrontoNomiCitta=F_confronto_stringhe((*nodoPartenza)->nomeCittaPtr,nomeCittaArrivo);
@@ -788,10 +863,27 @@ float F_ritorna_costo_volo_nodo_arco(ListaAdj *nodoPartenza, char *nomeCittaArri
     return 0;
 }
 
+/*
+ *  Descrizione: calcolo del tempo totale di un volo
+ *  Dettagli: se l'utente cerca la tratta più ECONOMICA viene calcolato il
+ *            tempo totale del volo ripercorrendo tutte le città scelte
+ *            da Dijkstra
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *                Q->coda contenente il percorso delle città
+ *                nomeCittaArrivo->nome della città di arrivo
+ *  Parametri out: tempo complessivo del volo
+ *  Chiamante: CompagniaAerea->F_utente_tratta_breve
+ *
+*/
 float F_ottieni_tempo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCittaArrivo){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     float tempoVoloComplessivo=0, tempoVoloSingoloArco=0; ListaAdj nodoCittaPartenza=NULL;
-
+    /*
+     * Discorso identico fatto in F_ottieni_costo_volo_complessivo.
+     * Unica differenza che si utilizza il peso del tempo e non del costo
+     * di un volo.
+     */
     while(*Q){
         Coda cittaPartenza=F_restituisci_top_coda(Q);
         F_dequeue(Q);
@@ -817,6 +909,15 @@ float F_ottieni_tempo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCitta
     return tempoVoloComplessivo;
 }
 
+/*
+ *  Descrizione: ritorna il temopo di un volo tra due città
+ *  Dettagli: //
+ *  Parametri in: nodoPartenza->nodo arco su cui trovare la città di arrivo
+ *                nomeCittaArrivo->nome della città di arrivo
+ *  Parametri out: tempo del volo tra le due città
+ *  Chiamante: CompagniaAerea->F_ottieni_costo_volo_complessivo
+ *
+*/
 float F_ritorna_tempo_volo_nodo_arco(ListaAdj *nodoPartenza, char *nomeCittaArrivo){
 
     if(!F_struttura_vuota(*nodoPartenza)){
@@ -833,11 +934,11 @@ float F_ritorna_tempo_volo_nodo_arco(ListaAdj *nodoPartenza, char *nomeCittaArri
 
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: gestione utente solo partenza
+ *  Dettagli: l'utente specifica di viaggiare con solo la città di partenza
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
- *  Parametri out:
+ *  Parametri out: //
  *  Chiamante: CompagniaAerea->F_utente_partenza_e_destinazione
  *
 */
@@ -866,23 +967,34 @@ void F_utente_solo_partenza(CompagniaAerea C){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: calcolo meta più economica
+ *  Dettagli: //
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
- *  Parametri out:
- *  Chiamante:
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_utente_solo_partenza
  *
 */
 void F_utente_meta_piu_economica(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     F_stampa_lista_citta(C);
-
+    /*
+     * Viene chiesto all'utente di inserire il nome della città in cui partire.
+     * La meta più economica rappresenta il volo meno costoso in cui la città di partenza può arrivare.
+     * Si tratta quindi di verificare tra tutti gli adiacenti dellà città di partenza la città cui arco
+     * ha costo minore.
+     *
+     */
     char *cittaPartenza=F_chiedi_stringa("il nome della citta' di partenza cui trovare la meta piu' economica");
     ListaAdj nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,cittaPartenza);
 
     if(nodoCittaPartenza) {
         Coda codaverticiAdiacenti=NULL;
+        /*
+         * Viene creata una coda con tutti i vertici adiacenti della città di partenza.
+         * Si scorre la coda conservando il costo più basso.
+         *
+         */
         F_crea_coda_vertici_adiacenti(&codaverticiAdiacenti,&nodoCittaPartenza->arcoPtr);
 
         if(codaverticiAdiacenti){
@@ -904,17 +1016,23 @@ void F_utente_meta_piu_economica(CompagniaAerea C){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: calcolo meta più gettonata
+ *  Dettagli: //
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
- *  Parametri out:
- *  Chiamante:
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_utente_solo_partenza
  *
 */
 void F_utente_meta_piu_gettonata(CompagniaAerea C){
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
-
+    /*
+     * Ogni città ha un valore "visite" che esprime il numero di biglietti
+     * acquistati dagli utenti verso quella città.
+     * La meta più gettonata rappresenta quindi la città con il maggior numero
+     * di visite.
+     *
+     */
     ListaAdj cittaGettonata=F_ottieni_citta_piu_gettonata(&L);
 
     if(cittaGettonata) printf("\nLa citta' piu' gettonata e' (%s).\n",cittaGettonata->nomeCittaPtr);
@@ -922,16 +1040,21 @@ void F_utente_meta_piu_gettonata(CompagniaAerea C){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: calcolo della città più gettonata
+ *  Dettagli: //
+ *  Parametri in: L->lista delle città
+ *  Parametri out: cittaDaRitornare->città con il numero
+ *                 di visite più grande
+ *  Chiamante: CompagniaAerea->F_utente_meta_piu_gettonata
  *
 */
 ListaAdj F_ottieni_citta_piu_gettonata(ListaAdj *L){
     int valoreVisitaCittaMassimo=0; ListaAdj cittaDaRitornare=NULL;
-
+    /*
+     * Si scorre la lista delle città conservando la città
+     * con il valore più grande di visite.
+     *
+     */
     while((*L)){
 
         if(valoreVisitaCittaMassimo<(*L)->visite) {
@@ -946,10 +1069,12 @@ ListaAdj F_ottieni_citta_piu_gettonata(ListaAdj *L){
 }
 
 /*
- *  Descrizione:
+ *  Descrizione: funzioni geriche di stampa.
  *  Dettagli:
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
+ *                L->lista delle città
+ *                L->arco delle città
  *  Parametri out:
  *  Chiamante:
  *
@@ -990,12 +1115,13 @@ void F_stampa_lista_citta_arco_grafo_lista_amministratore(ListaAdj *L){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: popolamento del grafo
+ *  Dettagli: vengono inserite le città e i relativi archi tra queste
+ *            specificando il tempo di volo e il costo del volo
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
- *  Parametri out:
- *  Chiamante:
+ *  Parametri out: //
+ *  Chiamante: CompagniaAera->F_gestione_compagnia_aera
  *
 */
 void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
@@ -1065,12 +1191,12 @@ void F_popoplamento_grafo_mappa_voli(CompagniaAerea C){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: popolamento degli amministratori
+ *  Dettagli: venogno creati tre amministratori
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
- *  Parametri out:
- *  Chiamante:
+ *  Parametri out: //
+ *  Chiamante: CompagniaAera->F_gestione_compagnia_aera
  *
 */
 void F_popolamento_amministratori(CompagniaAerea C){
@@ -1079,12 +1205,13 @@ void F_popolamento_amministratori(CompagniaAerea C){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: salvataggio degli amministratori
+ *  Dettagli: //
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
- *  Parametri out:
- *  Chiamante:
+ *                numeroAmministratori->numero degli amministratori da salvare
+ *  Parametri out: //
+ *  Chiamante: CompagniaAera->F_gestione_compagnia_aera
  *
 */
 void F_esegui_popolamento_amministratori(CompagniaAerea C, int numeroAmministratori){
@@ -1095,18 +1222,25 @@ void F_esegui_popolamento_amministratori(CompagniaAerea C, int numeroAmministrat
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: procede a salvare gli amministratori nell'albero
+ *  Dettagli: //
  *  Parametri in: C->struttura principale che contiene tutti i dati della
  *                compagnia aerea
- *  Parametri out:
- *  Chiamante:
+ *                numeroAmministratore->indica il numero dell'amministratore
+ *                da salvare
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_esegui_popolamento_amministratori
  *
 */
 void F_polamento_automatico_amministratori(CompagniaAerea C, int numeroAmministratore){
     Amministratore nuovoAmministratore=NULL; AlberoAmministratore T=C->strutturaAmministratoriPtr;
     char *nickname=NULL, *email=NULL, *password=NULL;
-
+    /*
+     * Per ogni amministratore viene allocata la propria struttura,
+     * le infomazioni vengono inserite in essa,
+     * Il nodo amministratore viene inserito nell'albero apposito.
+     *
+     */
     switch (numeroAmministratore){
         default:
             break;
@@ -1134,11 +1268,7 @@ void F_polamento_automatico_amministratori(CompagniaAerea C, int numeroAmministr
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: allocazione delle varie strutture
  *
 */
 void F_alloca_struttura_amministratore(Amministratore *nuovoAmministratore){
@@ -1195,11 +1325,11 @@ void F_alloca_struttura_gestione_grafo_citta(CompagniaAerea *C){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: verifica se una struttura e' vuota
+ *  Dettagli: //
+ *  Parametri in: S->qualsiasi tipo di struttura
+ *  Parametri out: 1->struttura vuota
+ *                 0->altrimenti
  *
 */
 int F_struttura_vuota(void *S){
@@ -1207,11 +1337,13 @@ int F_struttura_vuota(void *S){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: confronto tra due stringhe
+ *  Dettagli: le stringhe vegono confrontate non considerando
+ *            caratteri maiuscoli
+ *  Parametri in: s1,s2->stringhe da confrontare
+ *  Parametri out: 0->stringhe identiche
+ *                 <0->stringa s1 < stringa s2
+ *                 >0->stringa s1 > stringa s2
  *
 */
 int F_confronto_stringhe(char *s1, char *s2){
@@ -1219,11 +1351,17 @@ int F_confronto_stringhe(char *s1, char *s2){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: prende in intero da terminale
+ *  Dettagli: permette di prendere solo valori numerici scartando
+ *            eventuali altri caratteri. I parametri passati alla
+ *            funzione permettono di creare un range di numeri che
+ *            possono essere accettati, altimenti viene chiesto di
+ *            inserire di nuovo il valore
+ *  Parametri in: s->stringa da mostrare in output all'utente
+ *                dim->dimensione del vettore che conterrà i valori numerici presi in inmput
+ *                minimo->valore piu' piccolo che puo' essere preso
+ *                massimo->valore massimo che puo' essere preso
+ *  Parametri out: intero preso in input
  *
 */
 int F_chiedi_intero(char *s,int dim,char minimo,char massimo){
@@ -1271,11 +1409,12 @@ int F_chiedi_intero(char *s,int dim,char minimo,char massimo){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: prende in ingresso una stringa
+ *  Dettagli: vengono prese massimo LUNGHEZZA_STRINGHE
+ *            caratteri qualsiasi. Successivamente si crea una stringa delle
+ *            dimensioni adatte a quella inserita in input
+ *  Parametri in: s->testo che viene mostrato in output all'utente
+ *  Parametri out: stringa_uscita->stringa presa in input
  *
 */
 char *F_chiedi_stringa(char *s){
@@ -1318,14 +1457,21 @@ char *F_chiedi_stringa(char *s){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: prende un float da terminale
+ *  Dettagli: gestisce inserimento di un tipo float
+ *  Parametri in: s->stringa da mostrare in output all'utente
+ *                dim->dimensione del vettore che conterrà i valori numerici presi in input
+ *  Parametri out: elemento->valore di tipo float
  *
 */
 float F_chiedi_float(char *s, int dim){
+    /*
+     * Viene preso qualsiasi carattere in imput a patto che:
+     * non si superi il valore dim,
+     * non si arrivi a un new line
+     * non si arrivi a end of file
+     *
+     */
     char tmp[dim],c='*';
     int i=0;
     float ftemp;
@@ -1338,7 +1484,9 @@ float F_chiedi_float(char *s, int dim){
             tmp[i]=c;
             i++;
         }
-
+        /*
+         * L'utente può inserire sia il carattere "." che ",".
+         */
         if(c=='.' || c==','){
             tmp[i]='.';
             i++;
@@ -1356,11 +1504,12 @@ float F_chiedi_float(char *s, int dim){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: deallocazione di tutte le strutture
+ *  Dettagli: //
+ *  Parametri in: C->struttura principale che contiene tutti i dati della
+ *                compagnia aerea
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_gestione_compagnia_aerea
  *
 */
 void F_dealloca_strutture(CompagniaAerea C){
@@ -1368,7 +1517,14 @@ void F_dealloca_strutture(CompagniaAerea C){
     AlberoAmministratore alberoAmministratore=C->strutturaAmministratoriPtr;
     Grafo G=C->strutturaGrafoPtr; ListaAdj L=G->StrutturaGrafoPtr;
     StrutturaHeap Heap=C->strutturaGestioneHeapPtr;
-
+    /*
+     * Si verifica la presenza della struttura heap in quanto
+     * non è detto che sia stata allocata.
+     * La struttura heap è usata solo quando si effettuano ricerca
+     * di voli economici o brevi specificando città di partenza e
+     * arrivo.
+     *
+     */
     if(Heap){
         Distanza D=Heap->dPtr;
         Predecessore P=Heap->pPtr;
@@ -1383,6 +1539,10 @@ void F_dealloca_strutture(CompagniaAerea C){
     free(C);
 }
 
+/*
+ *  Descrizione: stampa dei menu e altre info
+ *
+*/
 void F_stampa_informazioni_utente_registrato(Utente utenteRegistrato){
     puts("---------------------------------------------");
     printf("\nBenvenuto - %s - I tuoi dati\n",utenteRegistrato->usernamePtr);
@@ -1400,7 +1560,6 @@ void F_stampa_menu_gestione_compagnia_aerea_login_registrazione(){
     puts("\n0] Esci");
     puts("---------------------------------------------");
 }
-
 
 void F_stampa_menu_gestione_compagnia_aerea_accesso_utente_registrato(){
     puts("---------------------------------------------");
