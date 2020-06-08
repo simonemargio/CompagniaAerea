@@ -608,7 +608,7 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
     printf("\nPartenza:(%s)\nArrivo:(%s)\nCosto totale del viaggio:(%f)\nTempo di volo:(%f)\n",cittaPartenza,cittaArrivo,costoVolo,tempoVolo);
 
     /*
-     * I punti di volo corrispondono ad uno sconto del 30% sul prezzo del volo.
+     * I punti di volo corrispondono al prezzo di volo totale con un 30% in meno.
      * Vengono calcolati come punti di tipo intero (più realistico e meglio da
      * vedere visavamente)
      * Si sommano i punti del volo con i punti precedentemente accumulati dall'utente
@@ -685,7 +685,8 @@ void F_utente_stampa_costo_e_tempo_totale_volo(CompagniaAerea C, char *cittaPart
 
 /*
  *  Descrizione: calcolo dei punti in base al costo del volo
- *  Dettagli: ogni volo viene scontato del 30% sul prezzo
+ *  Dettagli: ogni volo viene scontato del 30% sul prezzo e il valore ottenuto
+ *            rappresenta il totale di punti guadagnato
  *  Parametri in: costoVolo->costo totale del volo scelto
  *  Parametri out: prezzo volo scontato
  *  Chiamante: CompagniaAerea->F_utente_stampa_costo_e_tempo_totale_volo
