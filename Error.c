@@ -36,6 +36,30 @@ void F_error(int e){
         case 7:
             puts(" allocazione coda prenotzione.");
             break;
+        case 8:
+            puts(" allocazione valore float.");
+            break;
+        case 9:
+            puts(" allocazione elemento coda.");
+            break;
+        case 10:
+            puts(" allocazione array predecessori.");
+            break;
+        case 11:
+            puts(" allocazione array delle stime.");
+            break;
+        case 13:
+            puts(" allocazione nuovo nodo radice heap da ritornare a Dijkstra.");
+            break;
+        case 14:
+            puts(" allocazione array di maschera binaria.");
+            break;
+        case 15:
+            puts(" allocazione nuovo nodo albero heap.");
+            break;
+        case 16:
+            puts(" allocazione struttura heap.");
+            break;
     }
     puts("Uscita forzata.");
     exit(e);

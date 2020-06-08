@@ -5,6 +5,7 @@
 #include "Heap.h"
 #include "Dijkstra.h"
 #include "Coda.h"
+#include "Error.h"
 #define INFINITO -1
 /*
  * INFINITO: come specificato dall'algoritmo di Dijkstra tutti i nodi, tranne il sorgente,
@@ -247,6 +248,7 @@ void F_crea_coda_vertici_adiacenti(Coda *C, ListaAdj *L){
 void F_alloca_array_predecessore_p(Predecessore *P, int numeroNodi){
     int indiceScorrimento=0;
     (*P)=(struct struttura_predecessore_p*)malloc(numeroNodi* sizeof(struct struttura_predecessore_p));
+    if(F_struttura_vuota(*P)) F_error(10);
     for(;indiceScorrimento<numeroNodi;indiceScorrimento++) (*P)[indiceScorrimento].nodoPredecessore=NULL;
 }
 
@@ -264,6 +266,7 @@ void F_alloca_array_predecessore_p(Predecessore *P, int numeroNodi){
 void F_alloca_array_distanza_d(Distanza *D, int numeroNodi){
     int indiceScorrimento=0;
     (*D)=(struct struttura_distanza_d*)malloc(numeroNodi* sizeof(struct struttura_distanza_d));
+    if(F_struttura_vuota(*D)) F_error(11);
     for(;indiceScorrimento<numeroNodi;indiceScorrimento++) (*D)[indiceScorrimento].stima=INFINITO;
 }
 

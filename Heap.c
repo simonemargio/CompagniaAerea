@@ -240,7 +240,7 @@ AlberoHeap F_estrai_minimo_albero_heap(StrutturaHeap H){
      */
     if(minimoT){
          nuovoT=(struct struttura_nodo_albero_heap*)malloc(sizeof(struct struttura_nodo_albero_heap));
-
+         if(F_struttura_vuota(nuovoT)) F_error(13);
          nuovoT=F_copia_valori_albero_heap(minimoT,nuovoT);
 
          F_scambio_nodi_albero_heap(H,0,H->heapsize-1);
@@ -493,7 +493,7 @@ AlberoHeap F_inserisci_nodo_albero_heap(AlberoHeap T, AlberoHeap nuovoNodo, int 
 int *F_ottieni_bit(int n)
 {
     int *bits = malloc(sizeof(int)* DIMENSIONE_ARRAY_MASCHERA_BINARIA);
-
+    if(F_struttura_vuota(bits)) F_error(14);
     int k;
     for(k=0;k<DIMENSIONE_ARRAY_MASCHERA_BINARIA;k++)
     {
@@ -596,6 +596,7 @@ void F_decrease_key_albero_heap(StrutturaHeap H,int i, float val){
 AlberoHeap F_crea_nodo_albero_heap(StrutturaHeap Heap, int indiceNodo, char *nomeCitta){
     Distanza D=Heap->dPtr;
     AlberoHeap nuovoNodo=(struct struttura_nodo_albero_heap*)malloc(sizeof(struct struttura_nodo_albero_heap));
+    if(F_struttura_vuota(nuovoNodo)) F_error(14);
     /*
      * Come già espresso ogni nodo dell'albero heap ha l'indirizzo associato all'arrai delle stime
      * di indice pari alla città di riferimento del grafo.
@@ -652,15 +653,16 @@ ListaAdj F_ottieni_nome_citta_nodo_grafo_lista_da_indice(ListaAdj *L,int indiceC
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: allocazione struttua generale per lo heap
+ *  Dettagli: //
+ *  Parametri in: H->struttura heap
+ *  Parametri out: //
+ *  Chiamante: Dijkstra->F_inizializza_dikstra
  *
 */
 void F_alloca_struttura_generale_gestione_albero_heap(StrutturaHeap *H){
     (*H)=(struct struttura_gestione_albero_heap*)malloc(sizeof(struct struttura_gestione_albero_heap));
+    if(F_struttura_vuota(*H)) F_error(16);
     (*H)->dPtr=NULL;
     (*H)->pPtr=NULL;
     (*H)->heapsize=0;

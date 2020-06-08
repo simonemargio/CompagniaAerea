@@ -1490,6 +1490,7 @@ float F_chiedi_float(char *s, int dim){
 
     ftemp=strtof(tmp,NULL);
     float *elemento=malloc(sizeof(float));
+    if(F_struttura_vuota(elemento)) F_error(8);
     memcpy(elemento,&ftemp,sizeof(float));
 
     return *elemento;
