@@ -506,11 +506,16 @@ int *F_ottieni_bit(int n)
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: ignora tutti i bit pari a zero.
+ *  Dettagli: nella conversione dell'indice di inserimento
+ *            del nodo vengono ignorati tutti i bit pari a zero
+ *            e anche il primo 1 trovato.
+ *  Parametri in: bits->array contentente l'indice
+ *                dell'elemento espresso in binario
+ *  Parametri out: j->indice su cui partire per spostarsi a destra
+ *                 o sinistra nello heap.
+ *  Chiamante: Heap->F_inserisci_nodo_albero
+ *             Heap->F_preleva_nodo_albero
  *
 */
 int F_salta_zero_bit(int *bits)
@@ -518,7 +523,7 @@ int F_salta_zero_bit(int *bits)
     int j;
     for(j=DIMENSIONE_ARRAY_MASCHERA_BINARIA-1;j>=0;j--){
         if(bits[j]==1){
-            j--; // Salta anche il primo bit pari a uno
+            j--; /* Salta anche il primo bit pari a uno */
             break;
         }
     }
@@ -526,24 +531,44 @@ int F_salta_zero_bit(int *bits)
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: esegue il decrease della stima nel nodo scelto
+ *  Dettagli: cambia il valore di stima del nodo con un valore
+ *            piu' piccolo ed esegue il ripristino dello stato
+ *            di heap.
  *  Parametri in: H->struttura di gestione heap
- *  Parametri out:
- *  Chiamante:
+ *                i->indice del nodo su cui operare
+ *                val->nuova stima
+ *  Parametri out: //
+ *  Chiamante: Dijkstra->F_relax
  *
 */
 void F_decrease_key_albero_heap(StrutturaHeap H,int i, float val){
     AlberoHeap nodo=F_preleva_nodo_albero_heap(H,i);
     float *stimaNodo=nodo->stimaTempoOppureCostoPtr;
 
-
+    /*
+     * Si esegue il decrease quando:
+     * il nodo contiene INFINITO e quindi val contiene necessariamente il valore più piccolo
+     * il valore passato è minore di quello già presente.
+     *
+     * Si inserisce la nuova stima e si ripristina la proprietà dello heap.
+     */
     if(*stimaNodo==INFINITO || val < *stimaNodo){
         *stimaNodo=val;
 
         AlberoHeap nodoPadre=F_preleva_nodo_albero_heap(H,((i+1)/2)-1);
         float *stimaPadre=nodoPadre->stimaTempoOppureCostoPtr;
-
+        /*
+         * Effettuando un'operazione di diminuzione della stima di un nodo c'è la possibilità
+         * che venga meno la relazione di ordinamento parziale padre figli.
+         * Se si diminuisce la stima di un nodo in un min heap, bisogna verificare che tale valore
+         * sia corretto in riferimento alle stime dei nodi sopra di esso.
+         * Viene quindi prelevato il padre del nodo cui stima è stata cambiata e si verifica se la stima
+         * del padre sia maggiore di quella del figlio.
+         * Se è così allora la stima del nodo iniziale viene spostata al padre e il ciclo di ripete finchè
+         * non si ripristina la relazione padre figli dove il padre ha una stima minore rispetto ai figli.
+         *
+         */
         while( (i>0 && *stimaPadre==INFINITO) || (i>0 && *stimaPadre > *stimaNodo) ){
             F_scambio_nodi_albero_heap(H,i,((i+1)/2)-1);
 
@@ -559,16 +584,24 @@ void F_decrease_key_albero_heap(StrutturaHeap H,int i, float val){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
+ *  Descrizione: creazione di un nodo dell'albero heap
+ *  Dettagli: //
  *  Parametri in: H->struttura di gestione heap
- *  Parametri out:
- *  Chiamante:
+ *                indiceNodo->indice nodo in riferimento al grafo
+ *                nomeCitta->nome città da inserire
+ *  Parametri out: nuovoNodo->nodo allocato
+ *  Chiamante: Heap->F_crea_albero_heap
  *
 */
 AlberoHeap F_crea_nodo_albero_heap(StrutturaHeap Heap, int indiceNodo, char *nomeCitta){
     Distanza D=Heap->dPtr;
     AlberoHeap nuovoNodo=(struct struttura_nodo_albero_heap*)malloc(sizeof(struct struttura_nodo_albero_heap));
+    /*
+     * Come già espresso ogni nodo dell'albero heap ha l'indirizzo associato all'arrai delle stime
+     * di indice pari alla città di riferimento del grafo.
+     * Cambiare la stima nello heap equivale quindi a modificare l'array stesso.
+     *
+     */
     nuovoNodo->stimaTempoOppureCostoPtr=&D[indiceNodo].stima;
     nuovoNodo->nomeCitta=nomeCitta;
     nuovoNodo->indicePosizioneCittaPtr=indiceNodo;
@@ -579,16 +612,19 @@ AlberoHeap F_crea_nodo_albero_heap(StrutturaHeap Heap, int indiceNodo, char *nom
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: ritorna l'indice numerico in base alla città
+ *  Dettagli: ogni città viene associata ad un indice da 0 a N
+ *            (N=numero totale di città presenti)
+ *  Parametri in: L->lista contentente tutte le città
+ *                nomeCitta->nome della città cui associare l'indice
+ *                indiceNodoCitta->indice della città (parte da 0)
+ *  Parametri out: indiceNodoCitta->indice della città trovato
+ *  Chiamante: Heap->F_crea_albero_heap
+ *             Dijkstra->F_dijkstra
  *
 */
 int F_ottieni_indice_nodo_grafo_lista_da_nome_citta(ListaAdj *L,char *nomeCitta, int indiceNodoCitta){
     if(!F_struttura_vuota(*L)){
-    //    printf("\nCerco indice citta. Confronto Citta inviata:|%s|-Citta lista|%s|-|%d|\n",nomeCitta,(*L)->nomeCittaPtr,indiceNodoCitta);
         int controlloNomeCitta=F_confronto_stringhe((*L)->nomeCittaPtr,nomeCitta);
         if(controlloNomeCitta==0) return indiceNodoCitta;
         return F_ottieni_indice_nodo_grafo_lista_da_nome_citta((&(*L)->nextPtr),nomeCitta,indiceNodoCitta+1);
@@ -597,16 +633,18 @@ int F_ottieni_indice_nodo_grafo_lista_da_nome_citta(ListaAdj *L,char *nomeCitta,
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: ritorna il nome della città in base all'indice
+ *  Dettagli: funzione inversa di F_ottieni_indice_nodo_grafo_lista_da_nome_citta
+ *  Parametri in: L->lista contentente tutte le città
+ *                indiceCittaDaTrovare->indice della città da trovare
+ *                indiceCittaPartenza->indice della città cui partire (parte da 0)
+ *  Parametri out: L->nodo città trovato
+ *                 NULL->altrimenti
+ *  Chiamante: Dijkstra->F_dijkstra
  *
 */
 ListaAdj F_ottieni_nome_citta_nodo_grafo_lista_da_indice(ListaAdj *L,int indiceCittaDaTrovare, int indiceCittaPartenza){
     if(!F_struttura_vuota(*L)){
-   //     printf("\nCitta|%s|-|%d|-|%d|\n",(*L)->nomeCittaPtr,indiceCittaDaTrovare,indiceCittaPartenza);
         if(indiceCittaDaTrovare==indiceCittaPartenza) return (*L);
         return F_ottieni_nome_citta_nodo_grafo_lista_da_indice((&(*L)->nextPtr),indiceCittaDaTrovare,indiceCittaPartenza+1);
     }
@@ -631,27 +669,12 @@ void F_alloca_struttura_generale_gestione_albero_heap(StrutturaHeap *H){
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
- *
-*/
-void F_alloca_nodo_albero_heap(AlberoHeap *T, char *nomeCittaDaInserire, int indiceCittaDaInserire, float *stimaCitta){
-    (*T)->sxPtr=NULL;
-    (*T)->dxPtr=NULL;
-    (*T)->indicePosizioneCittaPtr=indiceCittaDaInserire;
-    (*T)->nomeCitta=nomeCittaDaInserire;
-    (*T)->stimaTempoOppureCostoPtr=stimaCitta;
-}
-
-/*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: deallocazione dell'array dei predecessori
+ *  Dettagli: //
+ *  Parametri in: P->array predecessori
+ *                numeroTotaleElementi->elementi totali
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_dealloca_strutture
  *
 */
 void F_dealloca_struttura_array_predecessori(Predecessore *P, int numeroTotaleElementi){
@@ -666,11 +689,11 @@ void F_dealloca_struttura_array_predecessori(Predecessore *P, int numeroTotaleEl
 }
 
 /*
- *  Descrizione:
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Descrizione: deallocazione dell'array delle stime
+ *  Dettagli: //
+ *  Parametri in: D->array delle stime
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_dealloca_strutture
  *
 */
 void F_dealloca_struttura_array_distanze(Distanza *D){
