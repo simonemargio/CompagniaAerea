@@ -32,7 +32,7 @@
  *
 */
 void F_inizializza_dijkstra(CompagniaAerea C, ListaAdj nodoSorgente, int discriminanteSceltaTempoCosto){
-    Predecessore P=NULL; Distanza D=NULL; StrutturaHeap Heap=NULL; AlberoHeap H=NULL;
+    Predecessore P=NULL; Distanza D=NULL; StrutturaHeap Heap=NULL;
     Grafo L=C->strutturaGrafoPtr; int numeroNodi=L->numeroNodi;
     /*
      * Vengono allocate le strutture necessarie e inserite nella struttura
