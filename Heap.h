@@ -3,9 +3,15 @@
 
 /*
  * Descrizione: struttura generale per gestire un albero heap e Dijkstra
- * Dettagli:
- * Contenuto:   alberoHeapPtr:
- *              heapsize: costo/tempo di un arco tra due città
+ * Dettagli:    //
+ * Contenuto:   alberoHeapPtr: puntatore alla radice dell'albero
+ *              heapsize: numero totale di elementi dello heap
+ *              dPtr: puntatore all'array delle stime
+ *              pPtr: puntatore all'array dei predecessori
+ *              codaCostoTempoEffettivoPtr: puntatore alla coda contenente
+ *              tutte le città visitate da una sorgente alla destionazione
+ *              scelta. Usata per costruire il costo di volo totale o tempo
+ *              di volo totale.
  *
  */
 struct struttura_gestione_albero_heap{
@@ -13,13 +19,29 @@ struct struttura_gestione_albero_heap{
     int heapsize;
     struct struttura_distanza_d *dPtr;
     struct struttura_predecessore_p *pPtr;
+    /*
+     * L'utente, indipendentemente se sceglie la tratta più economica
+     * o quella più breve deve sempre sapere il tempo totale nel primo caso
+     * e il costo totale nel secondo.
+     * Con Dijkstra ottieniamo il miglior tempo di volo e la coda conterrà
+     * le città per calcolare il costo di volo totale.
+     * Oppure otteniamo il miglior costo di volo e la coda quindi conterrò
+     * le città per calcolare il tempo totale di volo.
+     *
+     */
     struct struttura_elemento_coda *codaCostoTempoEffettivoPtr;
 };
 
 /*
- * Descrizione:
- * Dettagli:
- * Contenuto:
+ * Descrizione: struttura di un nodo dell'albero heap
+ * Dettagli: //
+ * Contenuto: nomeCitta: nome della città di riferimento
+ *            indicePosizioneCittaPtr: indice della posizione
+ *            della città associato
+ *            stimeTempoOppureCosto: in base alla scelta del tipo
+ *            di percorso da calcolare può contentere la stime di tempo
+ *            o di costo di un volo
+ *            sx/dxPtr: puntatore al figlio sinistro e destro
  */
 struct struttura_nodo_albero_heap{
     char *nomeCitta;
@@ -30,18 +52,24 @@ struct struttura_nodo_albero_heap{
 };
 
 /*
- * Descrizione:
- * Dettagli:
- * Contenuto:
+ * Descrizione: struttura per gestire l'array delle distanze
+ * Dettagli: l'array delle distanze/stime associa ad ogni vertice,
+ *           secondo l'algoritmo di Dijksta, un stima per eccesso
+ *           del percorso minimo dalla sorgente scelta dall'utente.
+ *           La stima viene pian piano raffinata dall'algoritmo.
+ * Contenuto: stima: valore della stima associata al nodo
  */
 struct struttura_distanza_d{
     float stima;
 };
 
 /*
- * Descrizione:
- * Dettagli:
- * Contenuto:
+ * Descrizione: struttura per gestire l'array dei predecessori
+ * Dettagli: l'array dei predecessori, per ognuno dei vertici del grafo,
+ *           consente di ricostruire uno dei percorsi minimi che permettono
+ *           di raggiungere lo specifico vertice dalla sorgente scelta dello
+ *           utente.
+ * Contenuto: nodoPredecessore->nodo predecessore di un nodo
  */
 struct struttura_predecessore_p{
     void *nodoPredecessore;
