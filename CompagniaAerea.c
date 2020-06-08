@@ -393,8 +393,8 @@ void F_aggiungi_volo_amministratore(CompagniaAerea C){
 
         if(nodoArrivo){
 
-            float costoVolo=F_chiedi_float("Inserisci il costo del volo (es: 34.100)",5);
-            float tempoVolo=F_chiedi_float("Inserisci il tempo di volo (es: 2.3400)",5);
+            float costoVolo=F_chiedi_float("Inserisci il costo del volo (es: 34.10)",5);
+            float tempoVolo=F_chiedi_float("Inserisci il tempo di volo (es: 2.340)",5);
 
             /*
              * L'algoritmo di Dijkstra lavoro SOLO con pesi positivi.
