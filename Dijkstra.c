@@ -175,10 +175,14 @@ void F_relax(StrutturaHeap H, AlberoHeap u, int indiceU, int indiceV, float arco
 
 /*
  *  Descrizione: ricerca dell'esistenza di un percorso
- *  Dettagli:
- *  Parametri in:
- *  Parametri out:
- *  Chiamante:
+ *  Dettagli: ricostruzione del percorso minimo tramite l'array dei
+ *            predecessori
+ *  Parametri in: H->struttura di gestione heap
+ *                L->lista del grafo
+ *                indiceCittaPartenza/Arrivo->indici delle città
+ *  Parametri out: //
+ *  Chiamante: CompagniaAerea->F_utente_tratta_breve
+ *             CompagniaAerea->F_utente_tratta_piu_economica
  *
 */
 void F_stampa_percorso(StrutturaHeap H,ListaAdj L,Predecessore P,int indiceCittaPartenza,int indiceCittaArrivo){
