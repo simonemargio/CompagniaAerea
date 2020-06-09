@@ -79,7 +79,7 @@ La registrazione dell'utente prevede i seguenti campi:
 ```
 Nome
 Cognome
-Nickname
+Username
 Email
 Password
 ```
@@ -93,7 +93,7 @@ Perso associato al **costo** (tipo euro) da spendere per arrivare da un nodo all
 **La tratta più economica**: si calcola il percorso minimo tra il nodo di partenza e il nodo di arrivo in base al peso associato al costo.\
 **La tratta più breve**: si calcola il percorso minimo tra il nodo di partenza e il nodo di arrivo in base al peso associato al al tempo.
 
-**La meta più economica**: si calcola il percorso minimo dando in pasto all'algoritmo ogni singolo nodo di arrivo e si verifica quale sia la meta più economica consideranto il peso associato al costo.\
+**La meta più economica**: si calcola l'arco con costo minore in riferimento alla città di partenza.\
 **La meta più gettonata**: ogni città avrà un valore numerico che indica il numero di volte che è stata scelta. La meta più gettonata è il numero più grande presente nel grafo.
 
 ## Voli non disponibili
@@ -103,21 +103,22 @@ I voli non disponibili sono quelli che in termini di grafo il nodo di partenza n
 Si calcola il percorso minimo minimo tra il nodo di partenza e di arrivo, se questo non ha alcun nodo intermedio allora non ci sono scali, altrimenti sono presenti. Ad esempio da Roma a New York non sono presenti scali mentre da Milano a New York si deve fare scalo prima a Roma.
 
 ## Punti
-I punti dell'utente sono dati in base a quanto ha speso per il volo diviso 2 o 3. Ogni punto equivale ad un euro. Se l'utente ha speso 300 euro di volo allora avrà 150 punti/euro da poter spendere per il volo successivo.
+Il costo del volo viene convertito in punti e ne viene ritornato all'utente i punti totali meno un 30%.
 
 # Strutture
 L'idea generale è di avere un'unica struttura princiaple che mantiene puntatori a tutte le altre strutture. Si ottiene affidablità e manutenibilità.
 
 ## Grafo Citta
 
-![GrafoCitta](https://user-images.githubusercontent.com/22590804/82929586-357b6480-9f84-11ea-91e8-9f320d9837b9.png)
+![GrafoCitta](https://user-images.githubusercontent.com/22590804/84180497-dccdc080-aa87-11ea-9f44-1c1fa0fb995d.png)
 Cliccare sull'immagine per ingrandirla.
 
 ## Generiche
 **Città**: grafo con liste di adiacenza implementate con liste di liste.\
-**Utenti registrati**: albero abr ordinato tramite nickname.\
-**Amministratori registrati**: albero abr ordinato tramite nickname amministratore.\
-**Coda di priorità**: tale struttura viene usata per svolgere l'algoritmo di dijkstra. La struttura più efficiente per la coda è un albero heap.
+**Utenti registrati**: albero abr ordinato tramite username.\
+**Amministratori registrati**: albero abr ordinato tramite username amministratore.\
+**Coda di priorità**: tale struttura viene usata per svolgere l'algoritmo di dijkstra. La struttura più efficiente per la coda è un albero heap.\
+**Prenotazioni attive a ltri**: coda contenente tutte le informazioni da mostrare.
 
 # Documentazione
 La documentazione sarà fatta con Latex.
