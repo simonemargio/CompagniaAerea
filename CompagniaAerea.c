@@ -806,8 +806,6 @@ float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCitta
      */
     while(*Q){
         Coda cittaPartenza=F_restituisci_top_coda(Q);
-        F_dequeue(Q);
-        Coda cittaArco=F_restituisci_top_coda(Q);
 
         /*
          * Per prendere il costo devo prendere il nodo nel grafo che ha il nome
@@ -816,6 +814,12 @@ float F_ottieni_costo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCitta
          */
         char *nomeCitta=cittaPartenza->elementoPtr;
         nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,nomeCitta);
+
+
+        F_dequeue(Q);
+        Coda cittaArco=F_restituisci_top_coda(Q);
+
+
 
         if(cittaArco){
             costoVoloSingoloArco=F_ritorna_costo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,cittaArco->elementoPtr);
@@ -878,12 +882,18 @@ float F_ottieni_tempo_volo_complessivo(CompagniaAerea C,Coda *Q, char *nomeCitta
      */
     while(*Q){
         Coda cittaPartenza=F_restituisci_top_coda(Q);
+        /*
+         * Per prendere il tempo devo prendere il nodo nel grafo che ha il nome
+         * di città preso dalla coda.
+         *
+         */
+        char *nomeCitta=cittaPartenza->elementoPtr;
+        nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,nomeCitta);
+
+
         F_dequeue(Q);
         Coda cittaArco=F_restituisci_top_coda(Q);
 
-
-        char *nomeCitta=cittaPartenza->elementoPtr;
-        nodoCittaPartenza=F_cerca_nodo_grafo_lista(&L,nomeCitta);
 
         if(cittaArco){
             tempoVoloSingoloArco=F_ritorna_tempo_volo_nodo_arco(&nodoCittaPartenza->arcoPtr,cittaArco->elementoPtr);
