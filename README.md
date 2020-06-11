@@ -110,7 +110,7 @@ L'idea generale è di avere un'unica struttura princiaple che mantiene puntatori
 
 ## Grafo Citta
 
-![GrafoCitta](https://user-images.githubusercontent.com/22590804/84180497-dccdc080-aa87-11ea-9f44-1c1fa0fb995d.png)
+![GrafoCitta](https://user-images.githubusercontent.com/22590804/84366729-8a99b600-abd3-11ea-85e5-287f5fc68399.png)
 Cliccare sull'immagine per ingrandirla.
 
 ## Generiche
