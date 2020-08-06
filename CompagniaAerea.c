@@ -1247,18 +1247,18 @@ void F_polamento_automatico_amministratori(CompagniaAerea C, int numeroAmministr
         default:
             break;
         case 1:
-            nickname="Murano";
-            email="murano@iucloud.com";
-            password="Murano";
+            nickname="Company";
+            email="company@icloud.com";
+            password="Company";
             break;
         case 2:
             nickname="Silvia";
-            email="silvia@hotmail.it";
+            email="silvia@hotmail.com";
             password="Silvia";
             break;
         case 3:
             nickname="Admin";
-            email="admin@compagniaera.com";
+            email="admin@ben.it";
             password="Admin";
             break;
     }
