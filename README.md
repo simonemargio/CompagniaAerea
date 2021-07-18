@@ -41,7 +41,7 @@ The following documentation is divided into two parts.
 
 The first part is intended for developers and those who are willing to understand how the program works at the project level.
 
-Alta, on the other hand, is intended for the end user and for those who want to access the correct use of the program, taking advantage of all its features.
+Alta, on the other hand, is intended for the end-user and for those who want to access the correct use of the program, taking advantage of all its features.
 
 It is possible to separate the two manuals according to the type of reader to which it should be destined, or consider the use of the entire documentation.
 
@@ -59,7 +59,7 @@ The use of all data structures and their interactions with the rest of the progr
 
 The user manual includes the analysis from the functional point of view of the program.
 
-The correct compilation and execution of the program is shown. We then move on to the interfaces and their correct use in more detail.
+The correct compilation and execution of the program are shown. We then move on to the interfaces and their correct use in more detail.
 
 
 ## Commissioned project
@@ -75,7 +75,7 @@ Only the city of departure, and the system offers him:
 
 All the routes proposed by the company may include stopovers. If there are no flights available for the selected route, the company will notify the user appropriately.
 
-With each purchase, the user accumulates points, in proportion to the cost of the booked route. Accumulating points allows you to accrue discounts for subsequent trips. Before proceeding with the booking, therefore, the system appropriately checks whether the user has discounts, and possibly applies them, if the user wishes.
+With each purchase, the user accumulates points, in proportion to the cost of the booked route. Accumulating points allows you to accrue discounts for subsequent trips. Before proceeding with the booking, therefore, the system appropriately checks whether the user has discounts, and possibly applies them if the user wishes.
 
 Before access by the user, the system can allow the airline to add new routes (both new destinations and new flights) and to remove them.
 
@@ -91,11 +91,11 @@ Both users and administrators, therefore, can log in on the same screen, the sys
 ## Routes and destinations
 Each flight between two cities builds an arch with the following information:
 * Weight associated with the **cost** of the flight.
-* Weight associated with **time** of flight.
+* Weight associated with the **time** of flight.
 
 We have:
 * **Cheapest route**: the minimum route between a city of departure and a destination calculated based on the weight of the cost of the flight.
-* **Shortest route**: the minimum route between a city of departure and a destination calculated on the basis of the weight of the flight time.
+* **Shortest route**: the minimum route between a city of departure and a destination calculated based on the weight of the flight time.
 * **Cheaper destination**: based on the city of departure, the cheapest destination is the flight with the lowest cost of all flights connected to the chosen departure city.
 * **Most popular destination**: it represents the city with the greatest number of views, that is, with the highest number of confirmed reservations towards the specified city.
 
@@ -108,13 +108,13 @@ The stopovers are defined by the calculation of the minimum route through the Di
 For example, if you choose *P* as your departure and *D* as your destination, if the Dijkstra algorithm shows only the route *P*, *D* then there is no stopover but only a direct flight. If, on the other hand, routes of type *P*, *A*, *B*, *D* are shown, then there are two stopovers to reach the destination city.
 
 ## Points
-The cost of a flight is expressed with a floating point number. Points are calculated from the total cost of the flight minus thirty percent and converted to full value. For example, if the cost of a flight is 15.03 then the points obtained will be 10.
+The cost of a flight is expressed with a floating-point number. Points are calculated from the total cost of the flight minus thirty percent and converted to full value. For example, if the cost of a flight is 15.03 then the points obtained will be 10.
 
 
 # Data structures
 The following data structures are used for airline management:
 1. Adjacency lists.
-2. Binary search trees (abr).
+2. Binary search trees (ABR).
 3. Heap binary trees.
 4. Array of structs.
 5. Queues.
@@ -157,7 +157,7 @@ If you need to allocate only one node for a new city then *pesoTempoPtr/pesoCost
 
 The use of list lists can be seen as an inefficient implementation considering the little radical change in the cities and flights already present. We can therefore fall into the error of constructing the graph using an array.
 
-This enjoys completely constant access to every node of the city, but this would imply the construction of a structure for a one-to-one mapping between the array index and the name of the city to which the index refers . It also adds possible wastage or poor memory management in the event of erasing and / or inserting cities and arcs, with possible reallocations and addition of other structures to reorder the information.
+This enjoys completely constant access to every node of the city, but this would imply the construction of a structure for a one-to-one mapping between the array index and the name of the city to which the index refers. It also adds possible wastage or poor memory management in the event of erasing and/or inserting cities and arcs, with possible reallocations and the addition of other structures to reorder the information.
 
 Lists of lists allow, instead, to have a completely balanced structure and at the same time built to ensure maximum integrity. Most of the operations that work on worst-case lists have complexity *O(n)*, considering a population of twenty cities, the cost can be entirely acceptable.
 
@@ -165,21 +165,21 @@ Lists of lists allow, instead, to have a completely balanced structure and at th
 Dijkstra's algorithm was built in such a way as to perform its role by taking advantage of a heap tree and two arrays identified as arrays of predecessors and arrays of estimates.
 
 ### Predecessors and estimates
-Defined as an **array of structs** and of length equal to the total number of nodes in the graph, Dijkstra constructs an array of estimates, to which each one assigns an overestimate of the minimum path from the source to the reference node.
+Defined as an **array of structs** and length equal to the total number of nodes in the graph, Dijkstra constructs an array of estimates, to which each one assigns an overestimate of the minimum path from the source to the reference node.
 
-With estimate for excess we indicate the *INFINITO* value. The estimate will then be gradually developed by the algorithm.
+With an estimate for excess we indicate the *INFINITO* value. The estimate will then be gradually developed by the algorithm.
 
 The array of predecessors, on the other hand, for each of the vertices of the graph allows you to reconstruct one of the minimum paths that allow you to reach the specific vertex from the source chosen by the user.
 
 The use of struct arrays allows greater maintainability by being able to define additional elements to add to the struct to increase the set of information to be fed to the algorithm without having to change the structure of this latter.
 
 ### Efficiency
-Dijkstra uses the **heap tree** to guarantee constant access to the node information with minimal estimate. The use of this structure makes the search for the minimum path more eﬃcient in terms of complexity, on the one hand the extraction of the minimum is *O(1)* and on the other the maintenance of the properties of a heap tree has in the worst case linear cost on the height of the tree itself, *O(h)*.
+Dijkstra uses the **heap tree** to guarantee constant access to the node information with a minimal estimate. The use of this structure searches the minimum path more eﬃcient in terms of complexity, on the one hand, the extraction of the minimum is *O(1)* and on the other, the maintenance of the properties of a heap tree has in the worst-case linear cost on the height of the tree itself, *O(h)*.
 
 All the information on the structure and the partial order to which a heap tree benefits (in this case identiﬁed as a min-heap) can be found in the form of comments in *Heap.c* and *Heap.h*.
 
 ## Reservations and others
-The set of reservations is made by the user, the set of all the adjacent vertices of a given node and the list of the cities of a route obtained using Dijkstra's algorithm for the calculation of the total cost / time (not minimum) of a flight are managed through the use of queues.
+The set of reservations is made by the user, the set of all the adjacent vertices of a given node and the list of the cities of a route obtained using Dijkstra's algorithm for the calculation of the total cost/time (not minimum) of a flight are managed through the use of queues.
 
 The choice of a queue reflects on the simple reason that all the information contained in it must essentially be shown and processed one after the other, until the end of the queue itself.
 
@@ -191,27 +191,27 @@ Click on the image to enlarge it.
 
 # User Manual
 ## Overview
-The following manual aims to facilitate the use of the application by means of a simple and quick overview of all the features available.
+The following manual aims to facilitate the use of the application through a simple and quick overview of all the features available.
 
 ## Data entry
-The only types of data required by the user include strings and integers. For administrators, floating point values are also added.
+The only types of data required by the user include strings and integers. For administrators, floating-point values are also added.
 
 **All operations involving the use of strings are case insensitive.**
 
 For example, if you want to choose a city of departure, the system accepts any alternation of uppercase-lowercase characters such as "lOnDoN", "LOnDON", "London" and the like.  
-In this way the user is not forced to necessarily replicate the construct of a string.
+In this way, the user is not forced to necessarily replicate the construct of a string.
 
 The **login** of a user and administrator is based on the **username-password** pair.
 
-At the **end of the manual** there is a **list of administrators** who can be used to log into the system and modify the structure of the city graph.
+At the **end of the manual**, there is a **list of administrators** who can be used to log into the system and modify the structure of the city graph.
 
 
 ## Interface construction
-Once the executable is started, you will find yourself in the main screen. In each of the proposed screens, it is possible to move through the insertion of the numerical value associated with the functionality to be performed.
+Once the executable is started, you will find yourself on the main screen. In each of the proposed screens, it is possible to move through the insertion of the numerical value associated with the functionality to be performed.
 
-All interfaces and related information shown to the user have been built in such a way as to guarantee:
+All interfaces and related information is shown to the user have been built in such a way as to guarantee:
 * **Consistency**: sequences of similar actions for similar situations. For example, the value zero is always used to go back on each screen.
-* **Informative feedback**: each user action corresponds to a system response. This allows the user to always understand what is happening at all times.
+* **Informative feedback**: each user action corresponds to system response. This allows the user to always understand what is happening at all times.
 * **Short-term memory reduction**: the number of information that the user is asked to remember is totally reduced to a minimum. For example, if the user wants to book a flight, the system prints the list of all the cities he can use.
 
 ### Interfaces
